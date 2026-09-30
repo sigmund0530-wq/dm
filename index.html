@@ -364,7 +364,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
     if(window.ResizeObserver) new ResizeObserver(size).observe(bed); else addEventListener('resize',size);
   })();
 
-  // ── 고슴도치(실사): 받은 표정 5장(1 활짝 · 2 미소 · 3 무표정 · 4 찡그림 · 5 울상, 모두 기저귀 착용)
+  // ── 고슴도치(실사): 받은 표정 5장(1 활짝 · 2 미소 · 3 무표정 · 4 찡그림 · 5 울상, 모두 기저귀 착용) + 만든 표정 1장(감은 눈 만족)
   // 3번을 몸으로 고정하고, 다른 표정은 코 위치·몸 폭으로 맞춰 얼굴 부분만 바꿔 끼움 → 표정이 바뀌어도 몸은 그대로
   // 머리는 이불 위 캔버스에도 그려서, 100점에 이불이 턱까지 와도 얼굴이 보이게 함
   function hogExtract(img){
@@ -395,42 +395,83 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
     var sx=0,sy=0,sn=0, bw=r-l, bh=bt-tp;
     for(var y3=Math.round(tp+bh*.12);y3<tp+bh*.34;y3++) for(var x3=Math.round(l+bw*.38);x3<l+bw*.62;x3++){ var k3=(y3*W+x3)*4, L=d[k3]*.3+d[k3+1]*.59+d[k3+2]*.11; if(L<70){ sx+=x3; sy+=y3; sn++; } }
     var nose=sn?[sx/sn,sy/sn]:[l+bw/2,tp+bh*.22];
+    (function(){ var ax=0,ay=0,aw=0; for(var y5=Math.round(nose[1]-bh*.04);y5<nose[1]+bh*.015;y5++) for(var x5=Math.round(nose[0]-bw*.06);x5<nose[0]+bw*.06;x5++){
+      var k5=(y5*W+x5)*4, L5=d[k5]*.3+d[k5+1]*.59+d[k5+2]*.11; if(L5<52){ var w5=52-L5; ax+=x5*w5; ay+=y5*w5; aw+=w5; } } if(aw) nose=[ax/aw,ay/aw]; })();   // 코끝 중심
+    // 눈: 코 위 양옆에서 가장 어두운 점들의 중심
+    function eye(sgn){ var ex=0,ey=0,ew=0,en=0; for(var y4=Math.round(nose[1]-bh*.11);y4<nose[1]+bh*.005;y4++) for(var x4=Math.round(nose[0]+sgn*bw*.07);sgn>0?x4<nose[0]+bw*.19:x4>nose[0]-bw*.19;x4+=sgn){
+        var k4=(y4*W+x4)*4, L4=d[k4]*.3+d[k4+1]*.59+d[k4+2]*.11; if(L4<48){ var w4=48-L4; ex+=x4*w4; ey+=y4*w4; ew+=w4; en++; } }
+      return ew?[ex/ew,ey/ew,Math.max(3,Math.sqrt(en/Math.PI))]:null; }
+    var eyeL=eye(-1), eyeR=eye(1);
     x.putImageData(im,0,0);
-    return {c:c, box:[l,tp,r,bt], nose:nose, noseN:sn};
+    return {c:c, box:[l,tp,r,bt], nose:nose, noseN:sn, eyeL:eyeL, eyeR:eyeR};
   });
 }
 
-  var hog=null, hogE=-1, hogPrev=-1, hogT0=0;
+  var hog=null, hogE=-1, hogPrev=-1, hogT0=0, blinkT=0;
+  // 가끔 눈 깜빡임 (0.16초: 감고 → 뜨기)
+  function blinkA(now){ var d=now-blinkT; if(d<0||d>160) return 0; return d<60? d/60 : d<90? 1 : 1-(d-90)/70; }
+  (function loop(){ var wait=2600+Math.random()*3400; setTimeout(function(){ if(!still&&document.visibilityState!=='hidden'&&hogE!==5&&hogE!==3){ blinkT=performance.now(); if(window.__hogDraw) window.__hogDraw(); if(Math.random()<.22) setTimeout(function(){ blinkT=performance.now(); window.__hogDraw&&window.__hogDraw(); },240); } loop(); },wait); })();
   (function(){
     var img=$('bmHogImg'), cvB=$('bmHog'), cvH=$('bmHogHead');
     function build(){
       var P=hogExtract(img), ref=P[2], rb=ref.box, bw=rb[2]-rb[0], bh=rb[3]-rb[1], W=bw+40, H=bh+40, ox=rb[0]-20, oy=rb[1]-20;
-      var nx=ref.nose[0]-ox, ny=ref.nose[1]-oy, rx=bw*.27, ry=bh*.16, cy=ny+bh*.03;
-      // 표정별 완성본: 몸(3번) 위에 얼굴 타원만 부드럽게 덮음
-      var faces=P.map(function(pk,k){
+      function pt(q){ return [q[0]-ox,q[1]-oy]; }
+      var RL=pt(ref.eyeL), RR=pt(ref.eyeR), RN=pt(ref.nose), cx=RN[0], cy=RN[1]+bh*.03, rx=bw*.27, ry=bh*.16;
+      // 세 점(왼눈·오른눈·코)을 기준 얼굴 위치에 정확히 맞추는 변환
+      function affine(s1,s2,s3,d1,d2,d3){ var A=[[s1[0],s1[1],1],[s2[0],s2[1],1],[s3[0],s3[1],1]];
+        function solve(b){ var m=A.map(function(r,i){return r.concat([b[i]])}); for(var c=0;c<3;c++){ var pv=c; for(var r=c+1;r<3;r++) if(Math.abs(m[r][c])>Math.abs(m[pv][c])) pv=r; var t=m[c]; m[c]=m[pv]; m[pv]=t;
+            for(var r2=0;r2<3;r2++){ if(r2===c) continue; var f=m[r2][c]/m[c][c]; for(var k=c;k<4;k++) m[r2][k]-=f*m[c][k]; } } return [m[0][3]/m[0][0],m[1][3]/m[1][1],m[2][3]/m[2][2]]; }
+        var X=solve([d1[0],d2[0],d3[0]]), Y=solve([d1[1],d2[1],d3[1]]); return [X[0],Y[0],X[1],Y[1],X[2],Y[2]]; }
+      // 닮음 변환(크기·회전·이동만, 찌그러짐 없음)을 세 점에 최소제곱으로 맞춤. 눈은 코보다 2배 가중
+      function simil(S,D){ var w=[2,2,1], sw=0, sx=0,sy=0,dx=0,dy=0; S.forEach(function(q,i){ sw+=w[i]; sx+=q[0]*w[i]; sy+=q[1]*w[i]; dx+=D[i][0]*w[i]; dy+=D[i][1]*w[i]; });
+        sx/=sw; sy/=sw; dx/=sw; dy/=sw; var A=0,B=0,N=0; S.forEach(function(q,i){ var u=q[0]-sx, v=q[1]-sy, U=D[i][0]-dx, V=D[i][1]-dy; A+=w[i]*(u*U+v*V); B+=w[i]*(u*V-v*U); N+=w[i]*(u*u+v*v); });
+        var a=A/N, b=B/N; return [a,b,-b,a, dx-(a*sx-b*sy), dy-(b*sx+a*sy)]; }
+      function faceOf(pk,k){
         var c=document.createElement('canvas'); c.width=W; c.height=H; var x=c.getContext('2d'); x.imageSmoothingQuality='high';
         x.drawImage(ref.c,-ox,-oy); if(k===2) return c;
-        var b=pk.box, sc=bw/(b[2]-b[0]), f=document.createElement('canvas'); f.width=W; f.height=H; var fx=f.getContext('2d'); fx.imageSmoothingQuality='high';
-        fx.drawImage(pk.c, nx-pk.nose[0]*sc, ny-pk.nose[1]*sc, pk.c.width*sc, pk.c.height*sc);
-        fx.globalCompositeOperation='destination-in'; fx.save(); fx.translate(nx,cy); fx.scale(rx,ry);
-        var g=fx.createRadialGradient(0,0,0,0,0,1); g.addColorStop(0,'#000'); g.addColorStop(.7,'#000'); g.addColorStop(1,'rgba(0,0,0,0)');
+        var f=document.createElement('canvas'); f.width=W; f.height=H; var fx=f.getContext('2d'); fx.imageSmoothingQuality='high';
+        var T=(pk.eyeL&&pk.eyeR)? simil([pk.eyeL,pk.eyeR,pk.nose],[RL,RR,RN]) : (function(){ var sc=bw/(pk.box[2]-pk.box[0]); return [sc,0,0,sc,RN[0]-pk.nose[0]*sc,RN[1]-pk.nose[1]*sc]; })();
+        fx.setTransform(T[0],T[1],T[2],T[3],T[4],T[5]); fx.drawImage(pk.c,0,0); fx.setTransform(1,0,0,1,0,0);
+        fx.globalCompositeOperation='destination-in'; fx.save(); fx.translate(cx,cy); fx.scale(rx,ry);
+        var g=fx.createRadialGradient(0,0,0,0,0,1); g.addColorStop(0,'#000'); g.addColorStop(.62,'#000'); g.addColorStop(1,'rgba(0,0,0,0)');
         fx.fillStyle=g; fx.fillRect(-1,-1,2,2); fx.restore();
-        x.drawImage(f,0,0); return c; });
-      hog={faces:faces, W:W, H:H, neck:(ny+bh*.19)/H};
+        x.drawImage(f,0,0); return c; }
+      var faces=P.map(faceOf);
+      // 감은 눈 덮개: 눈 둘레 털빛으로 눈을 덮고, 살짝 휜 눈꺼풀 선을 그림 (모든 표정에서 눈 위치가 같아 한 장으로 공유)
+      var lid=document.createElement('canvas'); lid.width=W; lid.height=H; var lx=lid.getContext('2d'), src=faces[2].getContext('2d').getImageData(0,0,W,H).data;
+      function ring(e,r0,r1){ var s0=0,s1=0,s2=0,n=0; for(var a=0;a<6.283;a+=.2) for(var rr=r0;rr<=r1;rr+=1){ var X=Math.round(e[0]+Math.cos(a)*rr), Y=Math.round(e[1]+Math.sin(a)*rr*.8), k=(Y*W+X)*4; if(src[k+3]<200) continue; s0+=src[k]; s1+=src[k+1]; s2+=src[k+2]; n++; } return n?[s0/n,s1/n,s2/n]:[160,130,120]; }
+      var er=Math.max(ref.eyeL[2],ref.eyeR[2],4)*1.9;
+      [[RL,-1],[RR,1]].forEach(function(q){ var e=q[0], col=ring(e,er*1.05,er*1.5);
+        lx.save(); lx.translate(e[0],e[1]);
+        var g=lx.createRadialGradient(0,0,0,0,0,er*1.25); g.addColorStop(0,'rgb('+col.map(Math.round)+')'); g.addColorStop(.72,'rgba('+col.map(Math.round)+',1)'); g.addColorStop(1,'rgba('+col.map(Math.round)+',0)');
+        lx.scale(1.25,.95); lx.fillStyle=g; lx.beginPath(); lx.arc(0,0,er*1.25,0,7); lx.fill(); lx.restore();
+        var nz=lx.getImageData(Math.round(e[0]-er*1.7),Math.round(e[1]-er*1.3),Math.round(er*3.4),Math.round(er*2.6)), nd=nz.data, sd=q[1]>0?7:13;   // 털 결
+        for(var i=0;i<nd.length;i+=4){ if(!nd[i+3]) continue; sd=(sd*16807)%2147483647; var n=(sd/2147483647-.5)*18; nd[i]+=n; nd[i+1]+=n; nd[i+2]+=n; }
+        lx.putImageData(nz,Math.round(e[0]-er*1.7),Math.round(e[1]-er*1.3));
+        lx.save(); lx.translate(e[0],e[1]); lx.lineCap='round';
+        lx.shadowColor='rgba(30,20,15,.6)'; lx.shadowBlur=er*.5;
+        lx.strokeStyle='#2e2420'; lx.lineWidth=Math.max(1.4,er*.28);                                        // 눈꺼풀 선: 가운데가 살짝 올라간 눈웃음
+        lx.beginPath(); lx.moveTo(-er*.95,er*.18); lx.quadraticCurveTo(0,-er*.42,er*.95,er*.18); lx.stroke();
+        lx.shadowBlur=0; lx.strokeStyle='rgba(255,240,230,.35)'; lx.lineWidth=Math.max(1,er*.16);           // 아래 눈두덩 빛
+        lx.beginPath(); lx.moveTo(-er*.7,er*.52); lx.quadraticCurveTo(0,er*.2,er*.7,er*.52); lx.stroke(); lx.restore(); });
+      // 5번(인덱스 5): 만족 = 미소 얼굴 + 감은 눈
+      var sat=document.createElement('canvas'); sat.width=W; sat.height=H; var sx=sat.getContext('2d'); sx.drawImage(faces[1],0,0); sx.drawImage(lid,0,0); faces.push(sat);
+      hog={faces:faces, lid:lid, W:W, H:H, neck:(RN[1]+bh*.16)/H};
     }
     // 침대 안 자리: 폭 66%, 머리가 베개에 오도록
     function place(cv){ var w=cv.width, h=cv.height, hw=w*.66, hh=hw*hog.H/hog.W; return [(w-hw)/2, h*.02, hw, hh]; }
     window.__hogDraw=function(){
       if(!hog) return; var r=bed.getBoundingClientRect(), k=Math.min(2,window.devicePixelRatio||1), w=Math.max(1,Math.round(r.width*k)), h=Math.max(1,Math.round(r.height*k));
       [cvB,cvH].forEach(function(c){ if(c.width!==w||c.height!==h){ c.width=w; c.height=h; } });
-      var t=Math.min(1,(performance.now()-hogT0)/140), pl=place(cvB);
+      var now=performance.now(), t0=Math.min(1,(now-hogT0)/280), t=t0*t0*(3-2*t0), pl=place(cvB), bl=blinkA(now);
       [cvB,cvH].forEach(function(c,ci){ var x=c.getContext('2d'); x.clearRect(0,0,w,h); x.imageSmoothingQuality='high';
         x.save();
         if(hogPrev>=0&&t<1){ x.globalAlpha=1; x.drawImage(hog.faces[hogPrev],pl[0],pl[1],pl[2],pl[3]); x.globalAlpha=t; }
-        x.drawImage(hog.faces[hogE<0?2:hogE],pl[0],pl[1],pl[2],pl[3]); x.restore();
+        x.drawImage(hog.faces[hogE<0?2:hogE],pl[0],pl[1],pl[2],pl[3]);
+        if(bl>0&&hogE!==5){ x.globalAlpha=bl; x.drawImage(hog.lid,pl[0],pl[1],pl[2],pl[3]); } x.restore();
         if(ci===1){ var ny=pl[1]+pl[3]*hog.neck, fh=pl[3]*.1, g=x.createLinearGradient(0,ny-fh,0,ny);   // 이불 위 머리: 목에서 서서히 사라져 이불 속으로
           g.addColorStop(0,'#000'); g.addColorStop(1,'rgba(0,0,0,0)'); x.globalCompositeOperation='destination-in'; x.fillStyle=g; x.fillRect(0,0,w,h); x.globalCompositeOperation='source-over'; } });
-      if(t<1) requestAnimationFrame(window.__hogDraw);
+      if(t0<1||bl>0) requestAnimationFrame(window.__hogDraw);
     };
     function go(){ try{ build(); }catch(e){ return; } hogE=-1; hogPick(score,true); window.__hogDraw(); }
     if(img.complete&&img.naturalWidth) go(); else img.addEventListener('load',go);
@@ -441,7 +482,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
     if(state==='cave') e=3;
     else if(bm.classList.contains('awake')) e= low()?4:3;          // 버티는 중: 찡그림 (이불이 붙잡는 날엔 울상)
     else if(state==='up') e= score>=50?4:0;                          // 결국 나옴: 높은 날엔 울상, 낮은 날엔 활짝
-    else e= v>=85?0 : v>=65?1 : v>=40?2 : 4;
+    else e= v>=92?5 : v>=76?0 : v>=58?1 : v>=36?2 : 4;            // 1단계(90점대) 만족 · 활짝 · 미소 · 무표정 · 울상
     if(e!==hogE||force){ hogPrev=hogE; hogE=e; hogT0=performance.now(); if(window.__hogDraw) window.__hogDraw(); }
     var hd=$('bmHogHead'); if(hd) hd.style.opacity= v>100? Math.max(0,1-(v-100)/14) : 1;   // 사주가 말리면 이불이 머리까지
   }
