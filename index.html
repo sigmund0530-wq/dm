@@ -63,6 +63,11 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
 .bm.awake:not(.relief) .h-wake,.bm.awake.relief .h-up{display:inline}
 .bm.awake .bm-coverwrap{position:absolute;inset:0;filter:drop-shadow(0 -5px 7px rgba(0,0,0,.45))}
 .bm-cover{clip-path:inset(100% 0 0 0)}
+.bm-area{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.bm-area polygon{fill:rgba(255,77,109,.10);stroke:#ff4d6d;stroke-width:2;stroke-dasharray:6 4;vector-effect:non-scaling-stroke}
+.bm-area[hidden]{display:none}
+.bm-test-area{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11px;color:#e8e2d8;cursor:pointer}
+.bm-test-area input{width:auto;margin:0}
 .bm-cloth{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
 .bm.gl .bm-cover{visibility:hidden}
 .bm-hem{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;-webkit-mask:var(--duvet) center/100% 100% no-repeat;mask:var(--duvet) center/100% 100% no-repeat}
@@ -169,6 +174,7 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
             <svg class="bm-head" viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="54" rx="34" ry="37" fill="#f1d3bd"/><path d="M15 50c0-24 16-38 35-38s35 14 35 38c-6-10-17-15-26-15-4 5-12 8-22 8-9 0-16 2-22 7z" fill="#2b2320"/><circle id="fBlushL" cx="29" cy="69" r="5" fill="#e9a3a0" opacity=".55"/><circle id="fBlushR" cx="71" cy="69" r="5" fill="#e9a3a0" opacity=".55"/><g class="h-idle" stroke="#3a2c25" fill="none" stroke-linecap="round" stroke-linejoin="round"><path id="fBrowL" d="M29 52L41 52" stroke-width="2.4" opacity="0"/><path id="fBrowR" d="M59 52L71 52" stroke-width="2.4" opacity="0"/><g id="fOpen" stroke="none"><ellipse id="fEyeL" cx="37" cy="61" rx="3.6" ry="3.6" fill="#2b2320"/><ellipse id="fEyeR" cx="63" cy="61" rx="3.6" ry="3.6" fill="#2b2320"/><circle cx="38.3" cy="59.5" r="1.15" fill="#fff"/><circle cx="64.3" cy="59.5" r="1.15" fill="#fff"/></g><g id="fHappy" stroke-width="2.6" opacity="0"><path d="M31 62Q37 55 43 62"/><path d="M57 62Q63 55 69 62"/></g><path id="fMouth" d="M45 77Q50 77 55 77" stroke-width="2.3"/><path id="fGrin" d="M42 74Q50 88 58 74Z" fill="#9a4a42" stroke-width="2" opacity="0"/><g id="fTears" stroke="#8cc8ff" stroke-width="2.6" opacity="0"><path d="M35 66.5v7"/><path d="M65 66.5v7"/></g><path id="fSweat" d="M79 38c-3 5-4.5 8-4.5 10.5a4.5 4.5 0 009 0c0-2.5-1.5-5.5-4.5-10.5z" fill="#a8d8ff" stroke="none" opacity="0"/></g><g class="h-wake"><path d="M30 57l12 3M70 57l-12 3" stroke="#3a2c25" stroke-width="2.6" stroke-linecap="round"/><circle cx="37" cy="63" r="3.4" fill="#2b2320"/><circle cx="63" cy="63" r="3.4" fill="#2b2320"/><path d="M44 78q6-4 12 0" stroke="#3a2c25" stroke-width="2.4" fill="none" stroke-linecap="round"/></g><g class="h-up"><circle cx="37" cy="61" r="3.4" fill="#2b2320"/><circle cx="63" cy="61" r="3.4" fill="#2b2320"/><path d="M42 73q8 9 16 0" stroke="#3a2c25" stroke-width="2.4" fill="none" stroke-linecap="round"/></g></svg>
             <span class="bm-coverwrap" aria-hidden="true"><span class="bm-layer bm-cover" id="bmCover"></span><canvas class="bm-cloth" id="bmCloth"></canvas></span>
             <svg class="bm-hem" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path id="bmHemPath" d=""/></svg>
+            <svg class="bm-area" id="bmArea" viewBox="0 0 458 591" preserveAspectRatio="none" aria-hidden="true"><polygon points="20,180 45,172 100,162 160,158 230,162 250,153 280,138 320,116 360,98 400,86 432,76 446,86 454,110 449,130 434,150 432,170 432,200 440,230 433,260 428,280 430,300 427,330 422,350 429,380 428,400 430,430 433,480 425,500 424,520 426,540 418,560 409,570 404,580 375,585 300,583 200,579 100,588 50,582 25,580 17,570 9,550 7,500 2,450 7,400 11,370 13,340 8,330 5,300 5,250 5,210 12,190"/></svg>
             <span class="bm-bubble" id="bmBubble" aria-hidden="true"></span>
             <span class="bm-bubble saju-voice" id="bmSaju" aria-hidden="true"><small>사주</small><span id="bmSajuT"></span></span>
           </button>
@@ -209,6 +215,7 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
         <div class="bm-test">
           <div class="bm-test-head"><b>점수 테스트</b><span>확인용 · 배포 전에 지우기</span></div>
           <button type="button" class="bm-skip" id="bmSkip">대사 10개 건너뛰기</button>
+          <label class="bm-test-area"><input type="checkbox" id="bmAreaT" checked> 이불 범위 표시 (베개 제외)</label>
           <input type="range" id="bmRange" min="0" max="100" value="78" aria-label="테스트 점수">
           <div class="bm-test-btns"><button type="button" data-v="0">0</button><button type="button" data-v="25">25</button><button type="button" data-v="50">50</button><button type="button" data-v="78">78</button><button type="button" data-v="90">90</button><button type="button" data-v="100">100</button></div>
         </div>
@@ -504,6 +511,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
   if(still){ wave(score,0,1.1); face(score); } else { face(0); requestAnimationFrame(frame); }
 
   // 점수 테스트 (확인용 · 배포 전에 지우기)
+  $('bmAreaT').addEventListener('change',function(){ $('bmArea').hidden=!this.checked; });
   var range=$('bmRange'), btns=[].slice.call(document.querySelectorAll('.bm-test-btns button'));
   function mark(v){ range.value=v; btns.forEach(function(x){x.classList.toggle('on',+x.dataset.v===v)}) }
   function setScore(v){ score=v; bm.dataset.score=v; mark(v); reset(); hideFin(); later(sajuShow,450); }
