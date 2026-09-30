@@ -52,7 +52,7 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
 @media print{ @page{size:430px 932px;margin:0} html,body{background:#e9e4dc} header{position:static} .bottom{position:static;transform:none!important;opacity:1!important} }
 .meter-wrap{padding-top:4px;margin-top:16px}.meter-labels{display:flex;justify-content:space-between;font-size:11px;color:#77716a;font-weight:800;margin:0 6px 6px}.gauge{position:relative;width:min(100%,460px);height:184px;margin:0 auto;overflow:visible}.gauge-svg{display:block;width:100%;height:100%;overflow:visible}.gauge-track{fill:none;stroke:#eee7df;stroke-width:30;stroke-linecap:round}.gauge-seg{fill:none;stroke-width:30;stroke-linecap:round}.needle{fill:#292929;filter:drop-shadow(0 2px 3px rgba(0,0,0,.18))}.needle-dot{fill:#fffdf9;stroke:#292929;stroke-width:5}.gauge-value{display:flex;justify-content:center;align-items:baseline;gap:5px;margin-top:-8px}.gauge-value b{font-size:52px;line-height:1;font-weight:950;letter-spacing:-.07em}.gauge-value span{font-size:11px;color:#77716a}.gauge-percent{text-align:center;margin-top:4px;font-size:10px;color:#77716a}.gauge-hint{text-align:center;margin-top:6px;font-size:12px;font-weight:850;color:#292621;letter-spacing:-.03em}.score-line{display:block;margin-top:12px}
 /* 02-02B 이불 게이지 */
-.bm-wrap{margin-top:58px;margin-bottom:14px}
+.bm-wrap{margin-top:88px;margin-bottom:14px}
 .bm{position:relative;--bw:clamp(170px,min(60vw,100% - 64px),236px);display:flex;justify-content:center;align-items:stretch;padding:8px 0 10px}
 .bm-bed{position:relative;width:var(--bw);aspect-ratio:458/591;padding:0;border:0;background:none;cursor:pointer;flex:none;border-radius:14px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .bm-bed:focus-visible{outline:2px solid #f0dfaa;outline-offset:6px}
@@ -65,11 +65,13 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
 .bm-cover{clip-path:inset(100% 0 0 0)}
 .bm-hem{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;-webkit-mask:var(--duvet) center/100% 100% no-repeat;mask:var(--duvet) center/100% 100% no-repeat}
 .bm-hem path{fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;opacity:.9;vector-effect:non-scaling-stroke}
-.bm-bubble{position:absolute;left:40%;bottom:99%;width:max-content;max-width:11em;word-break:keep-all;line-height:1.35;padding:6px 10px;border-radius:12px 12px 12px 3px;background:#fffdf9;color:#1b1b1b;font-size:12px;font-weight:850;letter-spacing:-.03em;box-shadow:0 6px 16px rgba(0,0,0,.35);opacity:0;transform:translateY(6px) scale(.9);transform-origin:0 100%;transition:opacity .18s,transform .18s;pointer-events:none;z-index:2}
+.bm-bubble{position:absolute;left:40%;bottom:calc(100% + 36px);width:max-content;max-width:11em;word-break:keep-all;line-height:1.35;padding:6px 10px;border-radius:12px 12px 12px 3px;background:#fffdf9;color:#1b1b1b;font-size:12px;font-weight:850;letter-spacing:-.03em;box-shadow:0 6px 16px rgba(0,0,0,.35);opacity:0;transform:translateY(6px) scale(.9);transform-origin:0 100%;transition:opacity .18s,transform .18s;pointer-events:none;z-index:2}
 .bm-bubble.show{opacity:1;transform:none}
 .bm-bubble.saju-voice{background:#f0dfaa;color:#2a2418;max-width:14.5em}
 .bm-bubble.saju-voice small{color:#8a7a4e}
-.bm-dir{position:absolute;right:5%;top:5%;display:flex;align-items:center;gap:5px;padding:5px 8px 5px 6px;border-radius:9px;background:rgba(18,26,42,.74);border:1px solid rgba(179,199,230,.45);color:#dde8f7;pointer-events:none;z-index:1}
+.bm-dir{position:absolute;left:50%;top:-26px;transform:translateX(-50%);display:flex;align-items:center;gap:5px;padding:5px 8px 5px 6px;border-radius:9px;background:rgba(18,26,42,.74);border:1px solid rgba(179,199,230,.45);color:#dde8f7;font:inherit;cursor:pointer;z-index:1;transition:transform .2s,box-shadow .2s}
+.bm-dir:focus-visible{outline:2px solid #f0dfaa;outline-offset:3px}
+.bm-dir.ping{transform:translateX(-50%) scale(1.08);box-shadow:0 0 0 4px rgba(179,199,230,.25)}
 .bm-dir b{font-size:14px;line-height:1;color:#b3c7e6}
 .bm-dir span{display:flex;flex-direction:column;line-height:1.25;text-align:left}
 .bm-dir em{font-style:normal;font-size:9px;color:#9fb2d0}
@@ -103,6 +105,19 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
 .bm-wrap .bm-share p.bm-share-q{margin-top:6px}
 .bm-wrap .bm-why p.bm-why-sub{margin:4px 0 12px}
 .bm-wrap .bm-why p.bm-why-row{margin-top:10px;line-height:1.55;color:#e8e2d8}
+.bm-more{border:0;background:none;padding:0;margin-left:2px;color:#f0dfaa;font:inherit;font-size:11px;font-weight:850;cursor:pointer;white-space:nowrap}
+.bm-next{display:flex;flex-direction:column;gap:8px}
+.bm-wrap .bm-next p.bm-next-h{margin:4px 0 0;font-size:11px;font-weight:800;color:#8f8a83;letter-spacing:.04em}
+.bm-next button{display:flex;text-align:left;width:100%;border-radius:12px;border:1px solid #3a3a3a;background:#252525;color:#f5f1e9;font:inherit;cursor:pointer}
+.bm-next button:focus-visible{outline:2px solid #f0dfaa;outline-offset:2px}
+.bm-next-scene{flex-direction:column;gap:4px;padding:12px 14px}
+.bm-next small{font-size:10px;color:#b9a06f;font-weight:700}
+.bm-next b{font-size:13px;line-height:1.45;letter-spacing:-.04em;word-break:keep-all}
+.bm-next em{font-style:normal;font-size:10.5px;font-weight:800;color:#bdb9b3}
+.bm-next-story{gap:12px;align-items:center;padding:10px}
+.bm-next-story .thumb{width:46px;flex:none;border-radius:8px;box-shadow:none}
+.bm-next-story .thumb:before{transform:scale(.36);transform-origin:0 100%}
+.bm-next-txt{display:flex;flex-direction:column;gap:3px;min-width:0}
 .bm-share-btns{display:flex;gap:8px;margin-top:12px}
 .bm-share-btns button{flex:1;padding:9px 0;border-radius:10px;border:1px solid #e6ded4;background:transparent;color:#34302b;font-size:12px;font-weight:800;cursor:pointer}
 .bm-share-btns button.pri{background:#171717;border-color:#171717;color:#fff}
@@ -152,10 +167,10 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
             <svg class="bm-head" viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="54" rx="34" ry="37" fill="#f1d3bd"/><path d="M15 50c0-24 16-38 35-38s35 14 35 38c-6-10-17-15-26-15-4 5-12 8-22 8-9 0-16 2-22 7z" fill="#2b2320"/><circle id="fBlushL" cx="29" cy="69" r="5" fill="#e9a3a0" opacity=".55"/><circle id="fBlushR" cx="71" cy="69" r="5" fill="#e9a3a0" opacity=".55"/><g class="h-idle" stroke="#3a2c25" fill="none" stroke-linecap="round" stroke-linejoin="round"><path id="fBrowL" d="M29 52L41 52" stroke-width="2.4" opacity="0"/><path id="fBrowR" d="M59 52L71 52" stroke-width="2.4" opacity="0"/><g id="fOpen" stroke="none"><ellipse id="fEyeL" cx="37" cy="61" rx="3.6" ry="3.6" fill="#2b2320"/><ellipse id="fEyeR" cx="63" cy="61" rx="3.6" ry="3.6" fill="#2b2320"/><circle cx="38.3" cy="59.5" r="1.15" fill="#fff"/><circle cx="64.3" cy="59.5" r="1.15" fill="#fff"/></g><g id="fHappy" stroke-width="2.6" opacity="0"><path d="M31 62Q37 55 43 62"/><path d="M57 62Q63 55 69 62"/></g><path id="fMouth" d="M45 77Q50 77 55 77" stroke-width="2.3"/><path id="fGrin" d="M42 74Q50 88 58 74Z" fill="#9a4a42" stroke-width="2" opacity="0"/><g id="fTears" stroke="#8cc8ff" stroke-width="2.6" opacity="0"><path d="M35 66.5v7"/><path d="M65 66.5v7"/></g><path id="fSweat" d="M79 38c-3 5-4.5 8-4.5 10.5a4.5 4.5 0 009 0c0-2.5-1.5-5.5-4.5-10.5z" fill="#a8d8ff" stroke="none" opacity="0"/></g><g class="h-wake"><path d="M30 57l12 3M70 57l-12 3" stroke="#3a2c25" stroke-width="2.6" stroke-linecap="round"/><circle cx="37" cy="63" r="3.4" fill="#2b2320"/><circle cx="63" cy="63" r="3.4" fill="#2b2320"/><path d="M44 78q6-4 12 0" stroke="#3a2c25" stroke-width="2.4" fill="none" stroke-linecap="round"/></g><g class="h-up"><circle cx="37" cy="61" r="3.4" fill="#2b2320"/><circle cx="63" cy="61" r="3.4" fill="#2b2320"/><path d="M42 73q8 9 16 0" stroke="#3a2c25" stroke-width="2.4" fill="none" stroke-linecap="round"/></g></svg>
             <span class="bm-coverwrap" aria-hidden="true"><span class="bm-layer bm-cover" id="bmCover"></span></span>
             <svg class="bm-hem" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path id="bmHemPath" d=""/></svg>
-            <span class="bm-dir" aria-hidden="true"><b>↑</b><span><em>머리 방향 동쪽</em><strong id="bmDirT">오늘 귀인 방위</strong></span></span>
             <span class="bm-bubble" id="bmBubble" aria-hidden="true"></span>
             <span class="bm-bubble saju-voice" id="bmSaju" aria-hidden="true"><small>사주</small><span id="bmSajuT"></span></span>
           </button>
+          <button type="button" class="bm-dir" id="bmDir" aria-label="오늘 귀인 방위 · 풍수 상세 보기"><b>↑</b><span><em>머리 방향 동쪽</em><strong id="bmDirT">오늘 귀인 방위</strong></span></button>
           <div class="bm-ruler" aria-hidden="true">
             <span class="bm-end bm-end-top">침대</span>
             <span class="bm-tick" style="--v:100">100</span><span class="bm-tick" style="--v:75">75</span><span class="bm-tick" style="--v:50">50</span><span class="bm-tick" style="--v:25">25</span><span class="bm-tick" style="--v:0">0</span>
@@ -178,10 +193,15 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
             <p class="bm-why-sub" id="bmWhySub"></p>
             <div class="bm-bar"><span>사주</span><i><u class="saju" id="bmSajuBar"></u></i><b id="bmSajuN"></b></div>
             <div class="bm-bar"><span>풍수</span><i><u class="fs" id="bmFsBar"></u></i><b id="bmFsN"></b></div>
-            <p class="bm-why-row"><b>사주</b><span id="bmWhySaju"></span></p>
-            <p class="bm-why-row"><b>풍수</b><span id="bmWhyFs"></span></p>
+            <p class="bm-why-row"><b>사주</b><span><span id="bmWhySaju"></span> <button type="button" class="bm-more" onclick="openDetails('saju')">사주 상세 ›</button></span></p>
+            <p class="bm-why-row"><b>풍수</b><span><span id="bmWhyFs"></span> <button type="button" class="bm-more" onclick="openDetails('feng')">풍수 상세 ›</button></span></p>
             <p class="bm-why-row warn"><b>주의</b><span id="bmWhyWarn"></span></p>
             <button type="button" class="bm-deep" onclick="alert('더 깊은 풀이 결제 화면입니다.')">더 깊게 보기 · 쿠키 3개</button>
+          </div>
+          <div class="bm-next">
+            <p class="bm-next-h">이어서 보기</p>
+            <button type="button" class="bm-next-scene" onclick="openDetails('scene-avoid')"><small>오늘의 장면</small><b id="bmNextScene"></b><em>장면 이어보기 ›</em></button>
+            <button type="button" class="bm-next-story" id="bmNextStory"><span class="thumb" id="bmNextThumb"></span><span class="bm-next-txt"><small id="bmNextSig"></small><b id="bmNextTitle"></b><em id="bmNextWhy"></em></span></button>
           </div>
         </div>
         <div class="bm-test">
@@ -298,13 +318,24 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
   function sajuLine(){ return score>=95?'푹 있어. 오늘은 내가 편들어 줄게.':score>=70?'누워 있어도 돼. 기운이 안으로 모이는 날이야.':score>=50?'반반이야. 버틸 만큼만 버텨.':'슬슬 나가 봐. 움직임이 앞에 있는 날이야.'; }
   function sajuShow(){ $('bmSajuT').textContent=sajuLine(); sajuB.classList.add('show'); }
   function sajuHide(){ sajuB.classList.remove('show'); }
+  // 당기는 도중 카메오: 풍수 태그가 끼어들고(5번째), 사주가 오늘의 장면을 꺼냄(12번째)
+  var dirEl=$('bmDir'), dirT=$('bmDirT');
+  function dirLabel(){ return low()?'귀인은 현관 쪽':'오늘 귀인 방위'; }
+  function cameo(){
+    if(tugs>=need()-1) return;
+    if(tugs===5){ dirT.textContent=low()?'현관까지 세 걸음':'귀인은 이불 속 (본인 주장)'; dirEl.classList.add('ping');
+      later(function(){ dirT.textContent=dirLabel(); dirEl.classList.remove('ping'); },1600); }
+    if(tugs===12){ clearTimeout(bubT); bub.classList.remove('show'); $('bmSajuT').textContent=low()?'나가면 오늘의 장면이 기다려.':'잠깐. 누운 순간, 해야 할 일 하나 떠올랐지?'; sajuB.classList.add('show');
+      later(sajuHide,1700); }
+  }
+  dirEl.addEventListener('click',function(){ if(typeof openDetails==='function') openDetails('feng'); });
   function reset(first){
     timers.forEach(clearTimeout); timers=[]; tugs=0; state='bed';
     bm.classList.remove('awake','relief'); bub.classList.remove('show','bed-voice'); bub.style.bottom='';
     num.textContent=score; marker.style.top=(100-score*K)+'%';
     cap.textContent=base(); hint.textContent=low()?'이불을 당겨 보세요. 침대가 몇 번 만에 놔줄까요?':'이불을 당겨 보세요. 몇 번 만에 나올까요?';
     bed.setAttribute('aria-label','오늘의 침대 지수 '+score+'점. '+base()+'. 누르면 이불을 당겨요.');
-    $('bmDirT').textContent=low()?'귀인은 현관 쪽':'오늘 귀인 방위';   // 풍수: 침대 머리 방향 (예시)
+    dirT.textContent=dirLabel(); dirEl.classList.remove('ping');   // 풍수: 침대 머리 방향 (예시)
     sajuHide(); later(sajuShow, first?450:1600);
     if(!first) pull(score,900);
   }
@@ -329,7 +360,20 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
     $('bmWhySaju').textContent=R.saju; $('bmWhyFs').textContent=R.fs; $('bmWhyWarn').textContent=R.warn;
     $('bmSajuBar').style.width=0; $('bmFsBar').style.width=0; $('bmSajuBar').dataset.w=sj; $('bmFsBar').dataset.w=fs;
     whyBox.hidden=true; whyBtn.setAttribute('aria-expanded','false'); whyBtn.querySelector('em').textContent='+';
-    fin.hidden=false;
+    showNext(kind); fin.hidden=false;
+  }
+  // 이어서 보기: 결과에 맞는 오늘의 장면 문구 + 연 오리지널 한 편
+  var NEXT={
+    high:{scene:'버티다 나왔어요. 누운 순간 떠오른 그 일, 지금 하러 가요.', story:['금요일 6:42, 상사가 37페이지를 보냈다','官이 움직임','t2','사주를 거역하고 나온 날, 이 장면이 기다려요']},
+    low:{scene:'침대를 뿌리쳤어요. 오늘 맞는 동네로 움직일 차례예요.', story:['낯선 동네에서 길을 잃었다','土가 받쳐줌','t8','귀인 방위 따라 나가면 이 장면으로 이어져요']},
+    cave:{scene:'안 나왔으니, 장면이 침대로 찾아와요.', story:['전 애인에게 새벽 2시에 전화가 왔다','火가 올라옴','t5','침대에 남은 밤, 이 전화가 올지도 몰라요']}
+  };
+  function showNext(kind){
+    var N=NEXT[kind]||NEXT.high, st=N.story;
+    $('bmNextScene').textContent=N.scene;
+    $('bmNextThumb').className='thumb '+st[2]; $('bmNextSig').textContent='연 오리지널 · '+st[1];
+    $('bmNextTitle').textContent=st[0]; $('bmNextWhy').textContent=st[3];
+    $('bmNextStory').onclick=function(){ if(typeof openStory==='function') openStory(st[0],st[1],st[2]); };
   }
   function hideFin(){ fin.hidden=true; }
   $('bmLinesBtn').addEventListener('click',function(){ linesEl.hidden=!linesEl.hidden; this.textContent=linesEl.hidden?'이유 '+linesEl.children.length+'개 전부 보기':'접기'; });
@@ -359,6 +403,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
       later(function(){ pull(Math.min(100,score+Math.min(tugs,6)*2),700); },280);
       later(function(){ bm.classList.remove('awake'); },1100);
       hint.textContent=tugs+'번 당겼어요. 침대가 아직 붙잡는 중';
+      cameo();
       return;
     }
     if(tugs>=need()){                         // 결국 일어남
@@ -382,6 +427,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
     later(function(){ pull(Math.min(100,score+Math.min(tugs,6)*2),650); },300);   // 더 높이 끌어올림
     later(function(){ bm.classList.remove('awake'); },1100);
     hint.textContent=tugs+'번 당겼어요. 아직 버티는 중';
+    cameo();
   });
   reset(true);
   if(still){ wave(score,0,1.1); face(score); } else { face(0); requestAnimationFrame(frame); }
