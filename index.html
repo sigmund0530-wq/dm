@@ -53,7 +53,7 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
 .meter-wrap{padding-top:4px;margin-top:16px}.meter-labels{display:flex;justify-content:space-between;font-size:11px;color:#77716a;font-weight:800;margin:0 6px 6px}.gauge{position:relative;width:min(100%,460px);height:184px;margin:0 auto;overflow:visible}.gauge-svg{display:block;width:100%;height:100%;overflow:visible}.gauge-track{fill:none;stroke:#eee7df;stroke-width:30;stroke-linecap:round}.gauge-seg{fill:none;stroke-width:30;stroke-linecap:round}.needle{fill:#292929;filter:drop-shadow(0 2px 3px rgba(0,0,0,.18))}.needle-dot{fill:#fffdf9;stroke:#292929;stroke-width:5}.gauge-value{display:flex;justify-content:center;align-items:baseline;gap:5px;margin-top:-8px}.gauge-value b{font-size:52px;line-height:1;font-weight:950;letter-spacing:-.07em}.gauge-value span{font-size:11px;color:#77716a}.gauge-percent{text-align:center;margin-top:4px;font-size:10px;color:#77716a}.gauge-hint{text-align:center;margin-top:6px;font-size:12px;font-weight:850;color:#292621;letter-spacing:-.03em}.score-line{display:block;margin-top:12px}
 /* 02-02B 이불 게이지 */
 .bm-wrap{margin-top:112px;margin-bottom:14px}
-.bm{position:relative;--bw:clamp(170px,min(60vw,100% - 64px),236px);display:flex;justify-content:center;align-items:stretch;padding:8px 0 10px}
+.bm{position:relative;--quilt:4.4% 30.5%,9.8% 29.1%,21.8% 27.4%,34.9% 26.7%,50.2% 27.4%,54.6% 25.9%,61.1% 23.4%,69.9% 19.6%,78.6% 16.6%,87.3% 14.6%,94.3% 12.9%,97.4% 14.6%,99.1% 18.6%,98.0% 22.0%,94.8% 25.4%,94.3% 28.8%,94.3% 33.8%,96.1% 38.9%,94.5% 44.0%,93.4% 47.4%,93.9% 50.8%,93.2% 55.8%,92.1% 59.2%,93.7% 64.3%,93.4% 67.7%,93.9% 72.8%,94.5% 81.2%,92.8% 84.6%,92.6% 88.0%,93.0% 91.4%,91.3% 94.8%,89.3% 96.4%,88.2% 98.1%,81.9% 99.0%,65.5% 98.6%,43.7% 98.0%,21.8% 99.5%,10.9% 98.5%,5.5% 98.1%,3.7% 96.4%,2.0% 93.1%,1.5% 84.6%,0.4% 76.1%,1.5% 67.7%,2.4% 62.6%,2.8% 57.5%,1.7% 55.8%,1.1% 50.8%,1.1% 42.3%,1.1% 35.5%,2.6% 32.1%;--bw:clamp(170px,min(60vw,100% - 64px),236px);display:flex;justify-content:center;align-items:stretch;padding:8px 0 10px}
 .bm-bed{position:relative;width:var(--bw);aspect-ratio:458/591;padding:0;border:0;background:none;cursor:pointer;flex:none;border-radius:14px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .bm-bed:focus-visible{outline:2px solid #f0dfaa;outline-offset:6px}
 .bm-layer{position:absolute;inset:0;background:var(--duvet) center/100% 100% no-repeat}
@@ -63,6 +63,9 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
 .bm.awake:not(.relief) .h-wake,.bm.awake.relief .h-up{display:inline}
 .bm.awake .bm-coverwrap{position:absolute;inset:0;filter:drop-shadow(0 -5px 7px rgba(0,0,0,.45))}
 .bm-cover{clip-path:inset(100% 0 0 0)}
+.bm-coverwrap{position:absolute;inset:0}
+.bm:not(.gl) .bm-coverwrap,.bm-hem{clip-path:polygon(var(--quilt))}
+.bm.over .bm-coverwrap,.bm.over .bm-hem{clip-path:none}
 .bm-area{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
 .bm-area polygon{fill:rgba(255,77,109,.10);stroke:#ff4d6d;stroke-width:2;stroke-dasharray:6 4;vector-effect:non-scaling-stroke}
 .bm-area[hidden]{display:none}
@@ -174,7 +177,7 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
             <svg class="bm-head" viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="54" rx="34" ry="37" fill="#f1d3bd"/><path d="M15 50c0-24 16-38 35-38s35 14 35 38c-6-10-17-15-26-15-4 5-12 8-22 8-9 0-16 2-22 7z" fill="#2b2320"/><circle id="fBlushL" cx="29" cy="69" r="5" fill="#e9a3a0" opacity=".55"/><circle id="fBlushR" cx="71" cy="69" r="5" fill="#e9a3a0" opacity=".55"/><g class="h-idle" stroke="#3a2c25" fill="none" stroke-linecap="round" stroke-linejoin="round"><path id="fBrowL" d="M29 52L41 52" stroke-width="2.4" opacity="0"/><path id="fBrowR" d="M59 52L71 52" stroke-width="2.4" opacity="0"/><g id="fOpen" stroke="none"><ellipse id="fEyeL" cx="37" cy="61" rx="3.6" ry="3.6" fill="#2b2320"/><ellipse id="fEyeR" cx="63" cy="61" rx="3.6" ry="3.6" fill="#2b2320"/><circle cx="38.3" cy="59.5" r="1.15" fill="#fff"/><circle cx="64.3" cy="59.5" r="1.15" fill="#fff"/></g><g id="fHappy" stroke-width="2.6" opacity="0"><path d="M31 62Q37 55 43 62"/><path d="M57 62Q63 55 69 62"/></g><path id="fMouth" d="M45 77Q50 77 55 77" stroke-width="2.3"/><path id="fGrin" d="M42 74Q50 88 58 74Z" fill="#9a4a42" stroke-width="2" opacity="0"/><g id="fTears" stroke="#8cc8ff" stroke-width="2.6" opacity="0"><path d="M35 66.5v7"/><path d="M65 66.5v7"/></g><path id="fSweat" d="M79 38c-3 5-4.5 8-4.5 10.5a4.5 4.5 0 009 0c0-2.5-1.5-5.5-4.5-10.5z" fill="#a8d8ff" stroke="none" opacity="0"/></g><g class="h-wake"><path d="M30 57l12 3M70 57l-12 3" stroke="#3a2c25" stroke-width="2.6" stroke-linecap="round"/><circle cx="37" cy="63" r="3.4" fill="#2b2320"/><circle cx="63" cy="63" r="3.4" fill="#2b2320"/><path d="M44 78q6-4 12 0" stroke="#3a2c25" stroke-width="2.4" fill="none" stroke-linecap="round"/></g><g class="h-up"><circle cx="37" cy="61" r="3.4" fill="#2b2320"/><circle cx="63" cy="61" r="3.4" fill="#2b2320"/><path d="M42 73q8 9 16 0" stroke="#3a2c25" stroke-width="2.4" fill="none" stroke-linecap="round"/></g></svg>
             <span class="bm-coverwrap" aria-hidden="true"><span class="bm-layer bm-cover" id="bmCover"></span><canvas class="bm-cloth" id="bmCloth"></canvas></span>
             <svg class="bm-hem" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path id="bmHemPath" d=""/></svg>
-            <svg class="bm-area" id="bmArea" viewBox="0 0 458 591" preserveAspectRatio="none" aria-hidden="true"><polygon points="20,180 45,172 100,162 160,158 230,162 250,153 280,138 320,116 360,98 400,86 432,76 446,86 454,110 449,130 434,150 432,170 432,200 440,230 433,260 428,280 430,300 427,330 422,350 429,380 428,400 430,430 433,480 425,500 424,520 426,540 418,560 409,570 404,580 375,585 300,583 200,579 100,588 50,582 25,580 17,570 9,550 7,500 2,450 7,400 11,370 13,340 8,330 5,300 5,250 5,210 12,190"/></svg>
+            <svg class="bm-area" id="bmArea" style="display:none" viewBox="0 0 458 591" preserveAspectRatio="none" aria-hidden="true"><polygon points="20,180 45,172 100,162 160,158 230,162 250,153 280,138 320,116 360,98 400,86 432,76 446,86 454,110 449,130 434,150 432,170 432,200 440,230 433,260 428,280 430,300 427,330 422,350 429,380 428,400 430,430 433,480 425,500 424,520 426,540 418,560 409,570 404,580 375,585 300,583 200,579 100,588 50,582 25,580 17,570 9,550 7,500 2,450 7,400 11,370 13,340 8,330 5,300 5,250 5,210 12,190"/></svg>
             <span class="bm-bubble" id="bmBubble" aria-hidden="true"></span>
             <span class="bm-bubble saju-voice" id="bmSaju" aria-hidden="true"><small>사주</small><span id="bmSajuT"></span></span>
           </button>
@@ -215,7 +218,7 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
         <div class="bm-test">
           <div class="bm-test-head"><b>점수 테스트</b><span>확인용 · 배포 전에 지우기</span></div>
           <button type="button" class="bm-skip" id="bmSkip">대사 10개 건너뛰기</button>
-          <label class="bm-test-area"><input type="checkbox" id="bmAreaT" checked> 이불 범위 표시 (베개 제외)</label>
+          <label class="bm-test-area"><input type="checkbox" id="bmAreaT"> 이불 범위 표시 (베개 제외)</label>
           <input type="range" id="bmRange" min="0" max="100" value="78" aria-label="테스트 점수">
           <div class="bm-test-btns"><button type="button" data-v="0">0</button><button type="button" data-v="25">25</button><button type="button" data-v="50">50</button><button type="button" data-v="78">78</button><button type="button" data-v="90">90</button><button type="button" data-v="100">100</button></div>
         </div>
@@ -296,7 +299,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
     var gl=cv.getContext('webgl',{premultipliedAlpha:true,alpha:true,antialias:false}); if(!gl) return;
     var VS='attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
     var FS=['precision mediump float;',
-      'uniform sampler2D T;uniform vec2 R;uniform float E[21];uniform vec4 I[4];uniform float t,slide;',
+      'uniform sampler2D T,M;uniform vec2 R;uniform float E[21];uniform vec4 I[4];uniform float t,slide,over;',
       'float top(float x){float s=0.;for(int i=0;i<21;i++){s+=E[i]*max(0.,1.-abs(x*20.-float(i)));}return s;}',
       // xy: 천이 밀린 양, z: 주름 높이
       'vec3 field(vec2 p){',
@@ -309,7 +312,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
       '  h+=rip*.9+pull*1.3*sin(atan(q.x,-q.y)*7.+r*6.)*smoothstep(.04,.16,r);}', // 잡은 점에서 뻗는 주름
       ' return vec3(d,h);}',
       'void main(){vec2 p=vec2(gl_FragCoord.x/R.x,1.-gl_FragCoord.y/R.y);float tp=top(p.x);',
-      ' float cov=smoothstep(tp-1.5/R.y,tp+1.5/R.y,p.y);vec4 b=texture2D(T,p);float A=b.a*cov;',
+      ' float cov=smoothstep(tp-1.5/R.y,tp+1.5/R.y,p.y);vec4 b=texture2D(T,p);float A=b.a*cov*mix(texture2D(M,p).a,1.,over);',
       ' if(A<.003){gl_FragColor=vec4(0.);return;}',
       ' vec3 f=field(p);vec4 c=texture2D(T,clamp(p-f.xy-vec2(0.,slide),0.,1.));',
       ' vec3 col=mix(b.rgb,c.rgb,c.a);',
@@ -324,7 +327,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
     gl.useProgram(pr);
     var buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
     var la=gl.getAttribLocation(pr,'a'); gl.enableVertexAttribArray(la); gl.vertexAttribPointer(la,2,gl.FLOAT,false,0,0);
-    var U={}; ['T','R','E','I','t','slide'].forEach(function(n){U[n]=gl.getUniformLocation(pr,n)});
+    var U={}; ['T','M','R','E','I','t','slide','over'].forEach(function(n){U[n]=gl.getUniformLocation(pr,n)});
     var m=/url\(["']?([^"')]+)["']?\)/.exec(getComputedStyle(bm).getPropertyValue('--duvet')); if(!m) return;
     var imps=[], ready=false, I=new Float32Array(16);
     function size(){ var r=bed.getBoundingClientRect(), k=Math.min(2,window.devicePixelRatio||1), w=Math.round(r.width*k), h=Math.round(r.height*k);
@@ -335,7 +338,18 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
       gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);
       [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T].forEach(function(w){gl.texParameteri(gl.TEXTURE_2D,w,gl.CLAMP_TO_EDGE)});
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-      gl.uniform1i(U.T,0); size(); ready=true; bm.classList.add('gl');
+      gl.uniform1i(U.T,0);
+      // 이불 영역 마스크 (베개 제외) → 텍스처 1번
+      var mc=document.createElement('canvas'); mc.width=img.naturalWidth; mc.height=img.naturalHeight;
+      var mx=mc.getContext('2d'); mx.fillStyle='#fff'; mx.beginPath();
+      $('bmArea').querySelector('polygon').getAttribute('points').trim().split(/\s+/).forEach(function(q,i){ var a=q.split(','); mx[i?'lineTo':'moveTo'](a[0]/458*mc.width, a[1]/591*mc.height); });
+      mx.closePath(); mx.fill();
+      gl.activeTexture(gl.TEXTURE1); var mt=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,mt);
+      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,mc);
+      [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T].forEach(function(w){gl.texParameteri(gl.TEXTURE_2D,w,gl.CLAMP_TO_EDGE)});
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+      gl.uniform1i(U.M,1); gl.activeTexture(gl.TEXTURE0);
+      size(); ready=true; bm.classList.add('gl');
     };
     img.src=m[1];
     if(window.ResizeObserver) new ResizeObserver(size).observe(bed); else addEventListener('resize',size);
@@ -346,7 +360,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
         for(var i=0;i<4;i++){var k=imps[i]; I[i*4]=k?k.x:0; I[i*4+1]=k?k.y:0; I[i*4+2]=k?(now-k.t0)/1000:0; I[i*4+3]=k?k.s:0;}
         gl.viewport(0,0,cv.width,cv.height); gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
         gl.uniform2f(U.R,cv.width,cv.height); gl.uniform1fv(U.E,edge); gl.uniform4fv(U.I,I);
-        gl.uniform1f(U.t,now/1000); gl.uniform1f(U.slide,Math.max(0,score-v)*K/100*.45);   // 걷힐 때 천이 같이 미끄러져 내려감
+        gl.uniform1f(U.t,now/1000); gl.uniform1f(U.over,Math.max(0,Math.min(1,(v-100)/6))); gl.uniform1f(U.slide,Math.max(0,score-v)*K/100*.45);   // 걷힐 때 천이 같이 미끄러져 내려감
         gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
       },
       // 누른 자리(0~1)에 힘을 줌. 이불이 아직 안 덮인 곳을 누르면 이불 끝단을 잡은 걸로 봄
@@ -355,9 +369,13 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
     };
     cv.addEventListener('webglcontextlost',function(e){e.preventDefault();ready=false;bm.classList.remove('gl')});
   })();
+  // 이불 윗선(%) · x 0,5,…,100% 지점마다. 베개는 빼고 이불이 시작되는 주름선
+  var QTOP=[30.5,30.3,29.1,28.4,27.7,27.2,27.0,26.7,27.0,27.2,27.4,25.7,23.8,21.7,19.6,17.8,16.3,15.1,13.9,13.2,14.6], wasOver=null;
   function wave(v,ph,amp){
-    var top=100-v*K, pts=[], d='';   // K: 100점이어도 턱 아래까지만 덮어 표정이 보이게
+    var pts=[], d='', over=v>100;   // 100점까지는 이불 윗선(QTOP)까지만. 100 넘으면(사주가 말림) 베개·얼굴까지 덮음
+    if(over!==wasOver){ bm.classList.toggle('over',over); wasOver=over; }
     for(var x=0;x<=100;x+=5){
+      var qt=QTOP[x/5], top=over?qt-(v-100)/42*(qt+3):100-v/100*(100-qt);
       var y=top+amp*Math.sin(x/100*Math.PI*2.2+ph)+amp*.5*Math.sin(x/100*Math.PI*5.3+ph*1.7);
       y=Math.max(-3,Math.min(100,y)); edgeY[x/5]=y/100; pts.push(x+'% '+y+'%'); d+=(x?'L':'M')+x+' '+y.toFixed(2);
     }
@@ -511,7 +529,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
   if(still){ wave(score,0,1.1); face(score); } else { face(0); requestAnimationFrame(frame); }
 
   // 점수 테스트 (확인용 · 배포 전에 지우기)
-  $('bmAreaT').addEventListener('change',function(){ $('bmArea').hidden=!this.checked; });
+  $('bmAreaT').addEventListener('change',function(){ $('bmArea').style.display=this.checked?'':'none'; });
   var range=$('bmRange'), btns=[].slice.call(document.querySelectorAll('.bm-test-btns button'));
   function mark(v){ range.value=v; btns.forEach(function(x){x.classList.toggle('on',+x.dataset.v===v)}) }
   function setScore(v){ score=v; bm.dataset.score=v; mark(v); reset(); hideFin(); later(sajuShow,450); }
