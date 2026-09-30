@@ -416,6 +416,24 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
         var g=fx.createRadialGradient(0,0,0,0,0,1); g.addColorStop(0,'#000'); g.addColorStop(.7,'#000'); g.addColorStop(1,'rgba(0,0,0,0)');
         fx.fillStyle=g; fx.fillRect(-1,-1,2,2); fx.restore();
         x.drawImage(f,0,0); return c; });
+      // 기저귀: 아랫배~다리 사이를 덮는 천 기저귀 (한 번 그려서 표정 5장에 똑같이 얹음)
+      var dp=document.createElement('canvas'); dp.width=W; dp.height=H; var d=dp.getContext('2d');
+      var cx=20+bw*.5, top=20+bh*.72, bot=20+bh*.93, hw=bw*.28, lw=bw*.10;
+      function shape(){ d.beginPath(); d.moveTo(cx-hw,top); d.quadraticCurveTo(cx,top-bh*.025,cx+hw,top);
+        d.bezierCurveTo(cx+hw*1.02,top+bh*.09,cx+lw*1.6,bot-bh*.05,cx+lw,bot); d.quadraticCurveTo(cx,bot+bh*.018,cx-lw,bot);
+        d.bezierCurveTo(cx-lw*1.6,bot-bh*.05,cx-hw*1.02,top+bh*.09,cx-hw,top); d.closePath(); }
+      d.save(); d.shadowColor='rgba(60,40,30,.35)'; d.shadowBlur=bw*.03; d.shadowOffsetY=bw*.008; shape();
+      var g=d.createLinearGradient(0,top,0,bot); g.addColorStop(0,'#fbfaf6'); g.addColorStop(.6,'#f1efe9'); g.addColorStop(1,'#dedbd3'); d.fillStyle=g; d.fill(); d.restore();
+      d.save(); shape(); d.clip();
+      var sd=d.createRadialGradient(cx,top+bh*.06,bw*.02,cx,top+bh*.1,hw*1.1); sd.addColorStop(0,'rgba(255,255,255,.55)'); sd.addColorStop(1,'rgba(150,140,125,.22)'); d.fillStyle=sd; d.fillRect(0,0,W,H);
+      [[-.5,.45,.9],[.5,.45,.9],[0,.8,.7]].forEach(function(q){ var gx=cx+hw*q[0], gy=top+(bot-top)*q[1], gr=hw*q[2]*.55;   // 부드러운 천 음영
+        var rg=d.createRadialGradient(gx,gy,0,gx,gy,gr); rg.addColorStop(0,'rgba(140,128,110,.16)'); rg.addColorStop(1,'rgba(140,128,110,0)'); d.fillStyle=rg; d.fillRect(gx-gr,gy-gr,gr*2,gr*2); });
+      var nz=d.getImageData(0,0,W,H), nd=nz.data, sd2=11; for(var i=0;i<nd.length;i+=4){ if(!nd[i+3]) continue; sd2=(sd2*16807)%2147483647; var n=(sd2/2147483647-.5)*14; nd[i]+=n; nd[i+1]+=n; nd[i+2]+=n; } d.putImageData(nz,0,0);   // 천 결
+      var bg2=d.createLinearGradient(0,top-bh*.02,0,top+bh*.02); bg2.addColorStop(0,'#e6f0f8'); bg2.addColorStop(1,'#c9dcee'); d.fillStyle=bg2; d.fillRect(cx-hw*1.1,top-bh*.02,hw*2.2,bh*.032);   // 허리 밴드
+      d.restore();
+      [[-1,1],[1,-1]].forEach(function(sgn){ d.save(); d.translate(cx+sgn[0]*hw*.9,top+bh*.01); d.rotate(sgn[1]*.25);          // 양쪽 테이프
+        d.globalAlpha=.9; d.fillStyle='#b3d2ec'; d.beginPath(); d.roundRect? d.roundRect(-bw*.035,-bh*.012,bw*.07,bh*.045,bw*.012) : d.rect(-bw*.035,-bh*.012,bw*.07,bh*.045); d.fill(); d.restore(); });
+      faces.forEach(function(c){ c.getContext('2d').drawImage(dp,0,0); });
       hog={faces:faces, W:W, H:H, neck:(ny+bh*.19)/H};
     }
     // 침대 안 자리: 폭 66%, 머리가 베개에 오도록
