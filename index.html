@@ -329,6 +329,8 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
         else o[j6+3]*= y6<edge[x6]-2 ? 0 : 1; }                          // 매트리스 밖(이불 늘어진 부분·그림자)은 선 아래만
     }
     x.putImageData(im,0,0);
+    if(k<4){ var sc2=document.createElement('canvas'); sc2.width=W; sc2.height=H; var sx2=sc2.getContext('2d');
+      sx2.shadowColor='rgba(0,0,0,.42)'; sx2.shadowBlur=5; sx2.shadowOffsetY=2; sx2.drawImage(c,0,0); c=sc2; }   // 이불 가장자리 그림자
     return {c:c, top: top.length? top[top.length>>1] : 0}; }
   return {W:W,H:H,MR:MR,layers:[0,1,2,3,4].map(mk)};
 }
@@ -349,7 +351,8 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
     x.clearRect(0,0,cv.width,cv.height); x.imageSmoothingQuality='high';
     var breath=Math.sin(ph*1.3)*amp*.9;                                  // 이불이 살짝 숨 쉼
     function put(k,top,al){ if(al<=.004||k>3) return; var src=k?Math.max(0,T[k]-40):0, sc=(Yb-top)/(Yb-T[k]);
-      x.globalAlpha=Math.min(1,al); x.drawImage(R.layers[k].c,0,src,R.W,R.H-src,0,(Yb-(Yb-src)*sc)*sy,R.W*sx,(R.H-src)*sc*sy); }
+      var l0=k?0:4, l1=k?R.W:306, d0=k?0:R.MR.x0-5, d1=k?R.W:R.MR.x1+6;
+      x.globalAlpha=Math.min(1,al); x.drawImage(R.layers[k].c,l0,src,l1-l0,R.H-src,d0*sx,(Yb-(Yb-src)*sc)*sy,(d1-d0)*sx,(R.H-src)*sc*sy); }
     if(v>100){ put(0,T[0]-(v-100)/42*(T[0]+34)+breath,1); x.globalAlpha=1; return; }   // 사주가 말림: 얼굴까지 덮음
     var st=Math.max(0,Math.min(4,(100-v)/25)), k=Math.min(3,Math.floor(st)), t=st-k, te=t*t*(3-2*t);
     // 겹쳐 흐리게 바꾸지 않음(잔상 방지): 윗선이 두 단계 사이 중간에 닿는 순간 한 장면으로 바뀜
