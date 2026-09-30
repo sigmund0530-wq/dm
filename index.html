@@ -53,8 +53,8 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
 .meter-wrap{padding-top:4px;margin-top:16px}.meter-labels{display:flex;justify-content:space-between;font-size:11px;color:#77716a;font-weight:800;margin:0 6px 6px}.gauge{position:relative;width:min(100%,460px);height:184px;margin:0 auto;overflow:visible}.gauge-svg{display:block;width:100%;height:100%;overflow:visible}.gauge-track{fill:none;stroke:#eee7df;stroke-width:30;stroke-linecap:round}.gauge-seg{fill:none;stroke-width:30;stroke-linecap:round}.needle{fill:#292929;filter:drop-shadow(0 2px 3px rgba(0,0,0,.18))}.needle-dot{fill:#fffdf9;stroke:#292929;stroke-width:5}.gauge-value{display:flex;justify-content:center;align-items:baseline;gap:5px;margin-top:-8px}.gauge-value b{font-size:52px;line-height:1;font-weight:950;letter-spacing:-.07em}.gauge-value span{font-size:11px;color:#77716a}.gauge-percent{text-align:center;margin-top:4px;font-size:10px;color:#77716a}.gauge-hint{text-align:center;margin-top:6px;font-size:12px;font-weight:850;color:#292621;letter-spacing:-.03em}.score-line{display:block;margin-top:12px}
 /* 02-02B 이불 게이지 */
 .bm-wrap{margin-top:58px;margin-bottom:14px}
-.bm{display:flex;justify-content:center;align-items:stretch;gap:16px;padding:8px 0 10px}
-.bm-bed{position:relative;width:clamp(190px,60vw,330px);aspect-ratio:458/591;padding:0;border:0;background:none;cursor:pointer;flex:none;border-radius:14px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.bm{position:relative;--bw:clamp(170px,min(60vw,100% - 64px),236px);display:flex;justify-content:center;align-items:stretch;padding:8px 0 10px}
+.bm-bed{position:relative;width:var(--bw);aspect-ratio:458/591;padding:0;border:0;background:none;cursor:pointer;flex:none;border-radius:14px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .bm-bed:focus-visible{outline:2px solid #f0dfaa;outline-offset:6px}
 .bm-layer{position:absolute;inset:0;background:var(--duvet) center/100% 100% no-repeat}
 .bm-base{filter:grayscale(.6) brightness(.5)}
@@ -78,7 +78,7 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
 .bm-bubble small{display:block;font-size:9.5px;font-weight:800;color:#6f85a8;margin-bottom:1px}
 .bm-bed.shake{animation:bmShake .28s ease}
 @keyframes bmShake{0%,100%{transform:none}30%{transform:translateY(5px)}60%{transform:translateY(-2px)}}
-.bm-ruler{position:relative;width:54px;flex:none;border-left:1px solid rgba(255,255,255,.14)}
+.bm-ruler{position:absolute;top:8px;bottom:10px;left:calc(50% + var(--bw) / 2 + 10px);width:54px;border-left:1px solid rgba(255,255,255,.14)}
 .bm-tick{position:absolute;left:0;top:calc((100 - var(--v) * .72) * 1%);transform:translateY(-50%);display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;color:#6d6862;font-variant-numeric:tabular-nums}
 .bm-tick::before{content:"";width:8px;height:1px;background:rgba(255,255,255,.28)}
 .bm-end{position:absolute;left:8px;font-size:10px;font-weight:800;color:#8f8a83}
