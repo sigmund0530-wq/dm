@@ -344,6 +344,15 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
           sxp=Math.max(0,Math.min(W-1,Math.round(sxp))); syp=Math.max(0,Math.min(H-1,Math.round(syp))); var js=(syp*W+sxp)*4;
           o[j0]=o[js]; o[j0+1]=o[js+1]; o[j0+2]=o[js+2]; } }
       x.putImageData(im,0,0); }
+    // 흰 이불·흰 베개: 파란 줄무늬 색을 빼고 밝기(주름·그림자)만 남겨 흰 천으로. 줄무늬는 밝기를 살짝 흐려 지움
+    (function(){ var Lm=new Float32Array(N), bl=new Float32Array(N); for(var i=0;i<N;i++){ Lm[i]=o[i*4]*.3+o[i*4+1]*.59+o[i*4+2]*.11; bl[i]=o[i*4+2]-o[i*4]; }
+      var Lb=blur(Lm,1), Lw=blur(Lm,4);
+      for(var y=0;y<H;y++) for(var xx=0;xx<W;xx++){ var i=y*W+xx; if(o[i*4+3]<8) continue;
+        var amt = k<4 ? 1 : ss(4,12,bl[i])*(1-ss(150,175,y));        // 이불은 전부, 바닥 레이어는 베개(푸른 부분)만
+        if(amt<=0) continue;
+        var Lx=Lb[i]*.55+Lw[i]*.45, v=Math.max(0,Math.min(255, 252-(226-Lx)*1.05));
+        o[i*4]+= (v+1-o[i*4])*amt; o[i*4+1]+=(v+1-o[i*4+1])*amt; o[i*4+2]+=(v+3-o[i*4+2])*amt; } })();
+    x.putImageData(im,0,0);
     var ext=null;
     if(k<4){ var ls=[],rs=[],bots=[], t0=(top.length?top[top.length>>1]:0)+30, lx, rx;
       for(var y7=t0;y7<H-14;y7+=3){ for(var x7=0;x7<W;x7++){ if(o[(y7*W+x7)*4+3]>200){ ls.push(x7); break; } } for(var x8=W-1;x8>=0;x8--){ if(o[(y7*W+x8)*4+3]>200){ rs.push(x8); break; } } }
@@ -514,7 +523,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
       var X0=(MR.x0-4-(e.l-sl)*hs)*sx, Y0=(DB-(e.b-src)*sc)*sy, WW=(sr-sl)*hs*sx, HH=(sb-src)*sc*sy, g=6*sx;
       x.drawImage(L.c, sl,src,sr-sl,sb-src, X0,Y0,WW,HH);
       // 이불 뒤(매트리스 안, 윗선 조금 아래부터)를 이불색으로 채움 → 사진 가장자리 틈으로 흰 시트가 비치지 않음
-      var fy=(top+36)*sy; if(fy<DB*sy){ x.save(); x.globalCompositeOperation='destination-over'; x.fillStyle='#a9b1bf';
+      var fy=(top+36)*sy; if(fy<DB*sy){ x.save(); x.globalCompositeOperation='destination-over'; x.fillStyle='#d8d9dc';
         x.beginPath(); if(x.roundRect) x.roundRect(MR.x0*sx,fy,(MR.x1-MR.x0)*sx,(DB-2)*sy-fy,[0,0,MR.r*sx,MR.r*sx]); else x.rect(MR.x0*sx,fy,(MR.x1-MR.x0)*sx,(DB-2)*sy-fy); x.fill(); x.restore(); } }
     if(v>100){ put(0,T[0]-(v-100)/42*(T[0]+34)+breath,1); x.globalAlpha=1; return; }   // 사주가 말림: 얼굴까지 덮음
     var st=Math.max(0,Math.min(4,(100-v)/25)), k=Math.min(3,Math.floor(st)), t=st-k, te=t*t*(3-2*t);
