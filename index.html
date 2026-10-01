@@ -417,7 +417,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
   });
 }
 
-  var hog=null, hogE=-1, hogPrev=-1, hogT0=0, blinkT=0;
+  var hog=null, hogE=-1, hogPrev=-1, hogT0=0, blinkT=0, hogMask=null;
   // 가끔 눈 깜빡임 (0.16초: 감고 → 뜨기)
   function blinkA(now){ var d=now-blinkT; if(d<0||d>160) return 0; return d<60? d/60 : d<90? 1 : 1-(d-90)/70; }
   (function loop(){ var wait=2600+Math.random()*3400; setTimeout(function(){ if(!still&&document.visibilityState!=='hidden'&&hogE!==5&&hogE!==3){ blinkT=performance.now(); if(window.__hogDraw) window.__hogDraw(); if(Math.random()<.22) setTimeout(function(){ blinkT=performance.now(); window.__hogDraw&&window.__hogDraw(); },240); } loop(); },wait); })();
@@ -466,7 +466,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
         lx.beginPath(); lx.moveTo(-er*.7,er*.52); lx.quadraticCurveTo(0,er*.2,er*.7,er*.52); lx.stroke(); lx.restore(); });
       // 5번(인덱스 5): 만족 = 미소 얼굴 + 감은 눈
       var sat=document.createElement('canvas'); sat.width=W; sat.height=H; var sx=sat.getContext('2d'); sx.drawImage(faces[1],0,0); sx.drawImage(lid,0,0); faces.push(sat);
-      hog={faces:faces, lid:lid, W:W, H:H, neck:(RN[1]+bh*.16)/H};
+      hog={faces:faces, lid:lid, W:W, H:H, neck:(RN[1]+bh*.16)/H, fx:RN[0]/W, fy:RN[1]/H, frx:bw*.34/W, fry:bh*.125/H};
     }
     // 침대 안 자리: 폭 66%, 머리가 베개에 오도록
     function place(cv){ var w=cv.width, h=cv.height, hw=w*.66, hh=hw*hog.H/hog.W; return [(w-hw)/2, h*.02, hw, hh]; }
@@ -479,8 +479,12 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
         if(hogPrev>=0&&t<1){ x.globalAlpha=1; x.drawImage(hog.faces[hogPrev],pl[0],pl[1],pl[2],pl[3]); x.globalAlpha=t; }
         x.drawImage(hog.faces[hogE<0?2:hogE],pl[0],pl[1],pl[2],pl[3]);
         if(bl>0&&hogE!==5){ x.globalAlpha=bl; x.drawImage(hog.lid,pl[0],pl[1],pl[2],pl[3]); } x.restore();
-        if(ci===1){ var ny=pl[1]+pl[3]*hog.neck, fh=pl[3]*.1, g=x.createLinearGradient(0,ny-fh,0,ny);   // 이불 위 머리: 목에서 서서히 사라져 이불 속으로
-          g.addColorStop(0,'#000'); g.addColorStop(1,'rgba(0,0,0,0)'); x.globalCompositeOperation='destination-in'; x.fillStyle=g; x.fillRect(0,0,w,h); x.globalCompositeOperation='source-over'; } });
+        if(ci===1){ // 이불 위 머리: 코 높이 위쪽 + 턱선(타원)까지만 또렷하게, 그 아래는 이불이 완전히 덮음 (반투명 겹침 없음)
+          var fx0=pl[0]+pl[2]*hog.fx, fy0=pl[1]+pl[3]*hog.fy, frx=pl[2]*hog.frx, fry=pl[3]*hog.fry, fe=Math.max(1.5,pl[2]*.006);
+          var m=hogMask||(hogMask=document.createElement('canvas')); if(m.width!==w||m.height!==h){ m.width=w; m.height=h; } var mx=m.getContext('2d');
+          mx.setTransform(1,0,0,1,0,0); mx.clearRect(0,0,w,h); mx.shadowColor='#000'; mx.shadowBlur=fe*2; mx.shadowOffsetX=w*2; mx.translate(-w*2,0);
+          mx.fillStyle='#000'; mx.beginPath(); mx.rect(0,0,w*3,fy0); mx.ellipse(fx0,fy0,frx,fry,0,0,Math.PI); mx.fill(); mx.setTransform(1,0,0,1,0,0); mx.shadowColor='transparent';
+          x.globalCompositeOperation='destination-in'; x.drawImage(m,0,0); x.globalCompositeOperation='source-over'; } });
       if(t0<1||bl>0) requestAnimationFrame(window.__hogDraw);
     };
     function go(){ try{ build(); }catch(e){ return; } hogE=-1; hogPick(score,true); window.__hogDraw(); }
