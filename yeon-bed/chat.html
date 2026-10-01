@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>연 · 우리 집 단톡방 (시안)</title>
+<style>
+:root{--bg:#fff;--ink:#000;--sub:#8e8e93;--line:#e5e5ea;--in:#e9e9eb;--out:#0a84ff;--saju:#f8e9a8;--saju-ink:#2b2207;--page:#f2f2f7;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%;margin:0}
+body{background:var(--page);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--out);outline-offset:2px}
+.phone{position:relative;max-width:430px;height:100%;margin:0 auto;background:var(--bg);overflow:hidden}
+@media(min-width:520px){body{padding:24px 0}.phone{height:min(880px,100%);border-radius:28px;box-shadow:0 20px 60px rgba(0,0,0,.12)}}
+.view{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);transition:transform .32s cubic-bezier(.3,.8,.3,1)}
+.view.off{transform:translateX(100%)}.view.back{transform:translateX(-24%)}
+
+/* 목록 */
+.lhead{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 0}
+.lhead .memo{border:0;background:none;color:var(--out);font-size:15px;padding:4px 0}
+.cookie{border:0;background:#f2f2f7;border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600}
+h1{margin:6px 16px 8px;font-size:32px;font-weight:700;letter-spacing:-.02em}
+.pinned{display:flex;justify-content:center;padding:18px 0 18px;border-bottom:1px solid var(--line)}
+.pin{position:relative;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0}
+.stack{position:relative;width:96px;height:84px}
+.stack .av{position:absolute;width:62px;height:62px;border:3px solid #fff}
+.stack .a1{left:0;top:0}.stack .a2{right:0;bottom:0}
+.pin b{font-size:13px;font-weight:600}
+.pin small{font-size:11px;color:var(--sub)}
+.pin .peek{position:absolute;top:-10px;left:84px;max-width:170px;background:var(--saju);border-radius:14px;padding:5px 9px;font-size:11.5px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pin .dot{position:absolute;left:-12px;top:36px;width:11px;height:11px;border-radius:50%;background:var(--out)}
+.sect{margin:18px 16px 4px;font-size:13px;color:var(--sub)}
+.row{display:flex;gap:12px;align-items:center;width:100%;border:0;background:none;text-align:left;padding:10px 16px}
+.row .av{width:52px;height:52px;flex:none}
+.row .t{flex:1;min-width:0;border-bottom:1px solid var(--line);padding-bottom:10px}
+.row .t b{display:flex;justify-content:space-between;font-size:16px;font-weight:600}
+.row .t b span{font-size:13px;font-weight:400;color:var(--sub)}
+.row .t p{margin:3px 0 0;font-size:14px;color:var(--sub);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.av{border-radius:50%;overflow:hidden;background:#ddd center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;line-height:1}
+.av.sj{background:radial-gradient(circle at 35% 30%,#fff6c9,#f3d35b 70%);color:#6b5208;font-size:15px}
+.av.story{background:linear-gradient(140deg,#b9a7ff,#ffb3c7);font-size:20px}
+.av.friends{background:linear-gradient(140deg,#9ad7ff,#b8f0c9);font-size:18px}
+.av.emoji{background:#e7f4e4}
+
+/* 대화방 */
+.chead{display:grid;grid-template-columns:96px 1fr 96px;align-items:center;padding:8px 8px 6px;border-bottom:1px solid var(--line);background:rgba(249,249,249,.95)}
+.chead .bk{border:0;background:none;color:var(--out);font-size:16px;text-align:left;padding:4px 6px;white-space:nowrap}
+.chead .who{display:flex;flex-direction:column;align-items:center;gap:3px}
+.chead .mini{display:flex}.chead .mini .av.sj{font-size:10px}.chead .mini .av{width:34px;height:34px;border:2px solid #fff;margin-left:-8px}.chead .mini .av:first-child{margin-left:0}
+.chead .who b{font-size:12px;font-weight:600}
+.chead .who small{font-size:10.5px;color:var(--sub)}
+.chead .act{border:0;background:none;color:var(--out);font-size:14px;justify-self:end;padding:4px 8px}
+.log{flex:1;overflow-y:auto;padding:8px 12px 16px}
+.time{text-align:center;font-size:11px;color:var(--sub);margin:14px 0 8px}.time b{font-weight:600}
+.sys{text-align:center;font-size:12px;color:var(--sub);margin:10px 24px;line-height:1.4}
+.sys.defy{color:#6b5208;font-weight:600}
+.name{font-size:11px;color:var(--sub);margin:8px 0 2px 46px}
+.m{display:flex;align-items:flex-end;gap:6px;margin:2px 0}
+.m.me{justify-content:flex-end}
+.m .slot{width:32px;height:32px;flex:none}.m .slot .av{width:32px;height:32px}
+.b{position:relative;isolation:isolate;max-width:72%;padding:7px 12px 8px;border-radius:18px;font-size:16px;line-height:1.32;letter-spacing:-.01em;word-break:keep-all;white-space:pre-line}
+.in .b{background:var(--in)}.me .b{background:var(--out);color:#fff}
+.sj-m .b{background:var(--saju);color:var(--saju-ink)}
+.m.tail.in .b::before{content:"";position:absolute;z-index:-1;bottom:0;left:-7px;width:20px;height:20px;background:inherit;border-bottom-right-radius:16px}
+.m.tail.in .b::after{content:"";position:absolute;z-index:-1;bottom:0;left:-10px;width:10px;height:20px;background:var(--bg);border-bottom-right-radius:10px}
+.m.tail.me .b::before{content:"";position:absolute;z-index:-1;bottom:0;right:-7px;width:20px;height:20px;background:var(--out);border-bottom-left-radius:16px}
+.m.tail.me .b::after{content:"";position:absolute;z-index:-1;bottom:0;right:-10px;width:10px;height:20px;background:var(--bg);border-bottom-left-radius:10px}
+.m.pop .b,.m.pop .card{animation:pop .26s cubic-bezier(.3,1.5,.5,1)}
+@keyframes pop{from{transform:scale(.86);opacity:0}}
+.in.pop .b,.in.pop .card{transform-origin:0 100%}.me.pop .b{transform-origin:100% 100%}
+.acts{display:flex;gap:6px;margin:4px 0 2px 44px}
+.acts button{border:0;background:#f2f2f7;border-radius:999px;padding:4px 10px;font-size:12.5px;color:#3a3a3c}
+.why{margin:4px 0 4px 44px;max-width:76%;background:#fffbe6;border:1px solid #f3e3a0;border-radius:14px;padding:10px 12px;font-size:14px;line-height:1.5;color:#3b300a;word-break:keep-all}
+.why button{display:block;margin-top:8px;border:0;background:#2b2207;color:#fff;border-radius:999px;padding:5px 12px;font-size:12.5px}
+.read{text-align:right;font-size:11px;color:var(--sub);margin:2px 4px 0}
+.typing .b{padding:12px 13px 11px;line-height:0}
+.typing i{display:inline-block;width:7px;height:7px;margin:0 2px;border-radius:50%;background:#8e8e93;animation:dot 1.1s infinite ease-in-out}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,60%,100%{opacity:.35}30%{opacity:1;transform:translateY(-2px)}}
+/* 침대 사진 카드 */
+.card{border:0;padding:0;background:#fff;border-radius:18px;overflow:hidden;width:min(250px,68%);box-shadow:0 0 0 1px var(--line);text-align:left}
+.card .ph{height:190px;background:#f7f7f7 center top/cover no-repeat}
+.card .cap{padding:9px 12px 11px}
+.card .cap b{display:block;font-size:14.5px;font-weight:700}
+.card .cap span{display:block;font-size:12.5px;color:var(--sub);margin-top:2px}
+.card .cap em{display:block;font-style:normal;font-size:12.5px;color:var(--out);margin-top:6px;font-weight:600}
+/* 위치 카드 */
+.loc{width:min(230px,64%);border-radius:18px;overflow:hidden;box-shadow:0 0 0 1px var(--line);background:#fff}
+.loc svg{display:block;width:100%;height:auto;background:#f4f6f8}
+.loc div{padding:8px 12px 10px;font-size:13.5px}.loc div span{display:block;font-size:12px;color:var(--sub);margin-top:1px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);min-height:58px;background:#fff}
+.chips button{border:1px solid var(--out);background:#fff;color:var(--out);border-radius:999px;padding:7px 14px;font-size:14.5px}
+.chips button.tok{border-color:#c7c7cc;color:#3a3a3c}
+.chips .hint{flex:1 1 100%;font-size:12px;color:var(--sub);text-align:right}
+.lockb .b{background:#f4f2ff;color:#4b3f8f}
+.lockb button{display:block;margin-top:6px;border:0;background:#6e5ce6;color:#fff;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600}
+
+/* 침대 전체 화면 */
+.bedv{position:absolute;inset:0;z-index:15;background:#fff;display:flex;flex-direction:column;align-items:center;animation:fade .2s ease}
+.bedv[hidden]{display:none}
+@keyframes fade{from{opacity:0}}
+.bedv .top{width:100%;display:flex;justify-content:space-between;align-items:center;padding:12px 16px}
+.bedv .top button{border:0;background:none;color:var(--out);font-size:16px}
+.bedv .top b{font-size:15px}
+.bedv .stage{position:relative;margin-top:70px;width:min(300px,78%)}
+.bedv .stage img{display:block;width:100%;height:auto;cursor:pointer;user-select:none;-webkit-user-drag:none}
+.bedv .stage img.shake{animation:shake .28s ease}
+@keyframes shake{30%{transform:translateY(6px)}60%{transform:translateY(-2px)}}
+.bedv .say{position:absolute;left:34%;bottom:calc(100% + 10px);background:var(--in);border-radius:18px;padding:7px 12px 8px;font-size:15px;max-width:14em;word-break:keep-all;opacity:0;transform:translateY(4px) scale(.95);transform-origin:0 100%;transition:opacity .15s,transform .2s cubic-bezier(.3,1.4,.5,1)}
+.bedv .say.on{opacity:1;transform:none}
+.bedv .say::before{content:"";position:absolute;z-index:-1;bottom:0;left:-7px;width:20px;height:20px;background:var(--in);border-bottom-right-radius:16px}
+.bedv .say::after{content:"";position:absolute;z-index:-1;bottom:0;left:-10px;width:10px;height:20px;background:#fff;border-bottom-right-radius:10px}
+.bedv .meta{margin-top:16px;text-align:center}
+.bedv .meta b{display:block;font-size:44px;font-weight:700;letter-spacing:-.03em}
+.bedv .meta span{font-size:13px;color:var(--sub)}
+.bedv .meta p{margin:8px 0 0;font-size:14px;color:#3a3a3c}
+
+/* 시트 */
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:flex-end;z-index:20}
+.scrim[hidden]{display:none}
+.sheet{width:100%;background:#fff;border-radius:16px 16px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));max-height:86%;overflow:auto;animation:up .26s ease}
+@keyframes up{from{transform:translateY(30px);opacity:0}}
+.sheet h2{margin:0 0 4px;font-size:18px;font-weight:700}
+.sheet>p{margin:0 0 12px;font-size:13.5px;color:#555;line-height:1.5;word-break:keep-all}
+.fwd{background:var(--saju);border-radius:16px;padding:14px;margin:6px 0 14px}
+.fwd small{font-size:11px;color:#6b5208;font-weight:600}
+.fwd p{margin:4px 0 0;font-size:16px;font-weight:700;color:var(--saju-ink);line-height:1.4}
+.fwd span{display:block;margin-top:8px;font-size:11.5px;color:#6b5208}
+.opt{display:flex;gap:12px;align-items:center;width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px 12px;margin-top:8px;text-align:left}
+.opt .av{width:46px;height:46px;flex:none}
+.opt div{flex:1}.opt b{display:block;font-size:15px;font-weight:600}
+.opt .desc{display:block;font-size:12.5px;color:var(--sub);margin-top:2px;line-height:1.35}
+.opt i{font-style:normal;font-size:12.5px;font-weight:600;color:var(--out);white-space:nowrap}
+.opt.on{border-color:var(--out);background:#f0f7ff}.opt[disabled]{opacity:.5;cursor:default}
+.rec{display:inline-block;margin-left:6px;font-size:10.5px;font-weight:700;color:#2e7d32;background:#e5f4e6;border-radius:6px;padding:1px 6px;vertical-align:2px}
+.buy{width:100%;border:0;background:var(--out);color:#fff;border-radius:12px;padding:13px 0;font-size:16px;font-weight:600;margin-top:6px}
+.buy.gray{background:#f2f2f7;color:#000}
+.cancel{width:100%;border:0;background:none;color:var(--sub);padding:12px 0 0;font-size:14px}
+.cover{height:140px;border-radius:12px;background:linear-gradient(160deg,#2a2650,#6e5ce6 55%,#ffb3c7);color:#fff;display:flex;flex-direction:column;justify-content:flex-end;padding:14px;margin-bottom:12px}
+.cover b{font-size:20px;font-weight:700}.cover span{font-size:12px;opacity:.85}
+.gets{margin:0 0 10px;padding:0;list-style:none;font-size:14px;line-height:1.5}.gets li{padding:6px 0;border-bottom:1px solid var(--line)}
+.memo p{font-size:14px;line-height:1.6;margin:0 0 10px;word-break:keep-all}.memo p b{display:block;font-size:13px;color:var(--out)}
+.strip{display:flex;gap:6px;justify-content:center;padding:8px 12px;border-bottom:1px solid var(--line);font-size:12px}.strip span{background:#f2f2f7;border-radius:999px;padding:4px 10px}
+.toast{position:absolute;left:50%;bottom:90px;translate:-50% 0;background:rgba(0,0,0,.8);color:#fff;font-size:13px;border-radius:999px;padding:8px 14px;z-index:40;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1}
+@media(prefers-reduced-motion:reduce){.view{transition:none}.m.pop .b,.m.pop .card,.sheet,.bedv{animation:none}.typing i{animation:none}}
+</style>
+</head>
+<body>
+<div class="phone">
+
+<section class="view" id="vList">
+  <div class="lhead"><button class="memo" id="memoBtn">기획 메모</button><button class="cookie" id="cookieBtn">🍪 <span class="ck">50</span></button></div>
+  <h1>메시지</h1>
+  <div class="pinned">
+    <button class="pin" id="pinHome" aria-label="우리 집 단톡방 열기">
+      <span class="dot" id="pinDot"></span><span class="peek">사주: 좋은 아침. 오늘은 물 기운이…</span>
+      <span class="stack"><span class="av sj a1">사주</span><span class="av mate a2"></span></span>
+      <b>우리 집</b><small>나 · <span class="mateName">고슴도치</span> · 사주</small>
+    </button>
+  </div>
+  <div class="sect">친구</div>
+  <button class="row" id="rowFriends"><span class="av friends">3</span><span class="t"><b>주말 모임 <span>어제</span></b><p>민지의 동거인: 우리 집 침대 지수 91임. 토요일 패스</p></p></span></button>
+  <div class="sect">이야기 속 인물</div>
+  <button class="row" id="rowSeo"><span class="av story">서</span><span class="t"><b>서하 <span id="seoTime">🔒</span></b><p id="seoPrev">『새벽 세 시의 이불』을 사면 대화방이 열려요</p></span></button>
+</section>
+
+<section class="view off" id="vHome">
+  <div class="chead">
+    <button class="bk" data-back>‹ 메시지</button>
+    <div class="who"><span class="mini"><span class="av sj">사주</span><span class="av mate"></span></span><b>우리 집</b><small>나 · <span class="mateName">고슴도치</span> · 사주</small></div>
+    <button class="act" id="formBtn">모습</button>
+  </div>
+  <div class="log" id="logHome" aria-live="polite"></div>
+  <div class="chips" id="chipsHome"></div>
+</section>
+
+<section class="view off" id="vSeo">
+  <div class="chead"><button class="bk" data-back>‹ 메시지</button><div class="who"><span class="av story" style="width:40px;height:40px">서</span><b>서하</b><small>『새벽 세 시의 이불』 속 인물</small></div><span></span></div>
+  <div class="strip"><span>서하의 오늘 침대 지수 <b>64</b></span><span>오늘 나와의 궁합 <b>순풍</b></span></div>
+  <div class="log" id="logSeo"></div>
+  <div class="chips" id="chipsSeo"></div>
+</section>
+
+<!-- 침대 전체 화면 -->
+<div class="bedv" id="bedV" hidden>
+  <div class="top"><button id="bedClose">닫기</button><b>침대 지수</b><span style="width:36px"></span></div>
+  <div class="stage"><span class="say" id="bedSay"></span><img id="bedImg" alt="이불을 덮고 누운 고슴도치. 누르면 이불을 당겨요"></div>
+  <div class="meta"><b>78</b><span>점 / 100</span><p id="bedHint">사진을 눌러 이불을 당겨 보세요</p></div>
+</div>
+
+<div class="scrim" id="sFwd" hidden><div class="sheet" role="dialog" aria-label="전달">
+  <h2>친구에게 전달</h2><p>약속을 미루고 싶을 때, 사주가 대신 말해 줘요.</p>
+  <div class="fwd"><small>사주가 먼저 한마디 · 연</small><p>오늘은 사주가 집에 있으래.</p><span>무신일 · 침대 지수 78</span></div>
+  <button class="buy" data-fake>카카오톡으로 보내기</button><button class="buy gray" data-fake>링크 복사</button>
+  <button class="cancel" data-close>닫기</button></div></div>
+
+<div class="scrim" id="sForm" hidden><div class="sheet" role="dialog" aria-label="모습 바꾸기">
+  <h2>모습 바꾸기</h2><p>모습만 바뀌고, 대화와 기억은 그대로예요.</p><div id="formList"></div>
+  <button class="cancel" data-close>닫기</button></div></div>
+
+<div class="scrim" id="sBuy" hidden><div class="sheet" role="dialog" aria-label="작품 구매">
+  <div class="cover"><span>연 오리지널 · 12화 완결</span><b>새벽 세 시의 이불</b></div>
+  <ul class="gets"><li>작품 전체 12화</li><li>서하 대화방 — 작품 속 이야기와 오늘 일진으로 문자가 와요</li><li>서하의 오늘 침대 지수, 오늘 나와의 궁합</li></ul>
+  <button class="buy" id="buySeo">쿠키 20개로 구매</button><button class="cancel" data-close>나중에</button></div></div>
+
+<div class="scrim" id="sMemo" hidden><div class="sheet memo" role="dialog" aria-label="기획 메모">
+  <h2>모든 게 '우리 집' 단톡방 안에서</h2>
+  <p><b>사주는 대화방의 멤버</b>매일 아침 가장 먼저 말해요. 노란 말풍선, 그 아래 '왜?'와 '전달'.</p>
+  <p><b>침대 지수는 고슴도치가 보낸 사진</b>사진을 누르면 침대가 열리고, 이불을 당기면 답장이 와요. 대화에서 바로 "툭"을 보내도 돼요.</p>
+  <p><b>좋은 쪽은 위치 공유</b>고슴도치가 오늘 누워 있는 자리를 보내요.</p>
+  <p><b>부탁 · 기억 · 외출</b>부탁을 들어주면 사주가 한 줄 알려 줘요. 안 들어줘도, 나가도 상태는 그대로예요.</p>
+  <p><b>공유 = 전달과 캡처</b>사주 메시지를 친구에게 전달하면 거절 카드가 돼요.</p>
+  <button class="cancel" data-close>닫기</button></div></div>
+
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+window.__EMBED=/[?&]embed=1/.test(location.search);  // 침대 화면 안에서 열릴 때
+var A={"bed": "assets/chat-bed-card.webp", "plead": ["안 나가…", "진짜 안 나가", "아 왜애애", "사주가 있으랬는데", "이불이 나 좋대", "5분만 더 누워 있을게", "밖에 뭐 있는데", "나 오늘 휴무야 (마음이)", "잠깐, 이불이랑 얘기 중", "10번째다. 포기해", "밖에 바람 분대", "입을 옷이 없어", "머리 안 감았어", "신발이 나를 싫어해", "엘리베이터 기다리기 싫어", "날씨 앱이 흐리대", "약속 취소되길 기도 중", "배고프면 배달 시킬게", "택배 와. 기다려야 돼", "스무 번이다. 대단하다 너", "좋아, 협상하자", "10분 뒤에 나갈게 (안 나감)", "양말 한 짝만 신을게", "이불째로 나가면 안 돼?", "창문 열게. 그걸로 외출", "밖은 인터넷에서 봤어", "로드뷰로 산책 완료", "오늘 걸음 수 목표: 12보", "나 대신 폰이 나갈게", "서른 번… 우리 무슨 사이야", "이불 속에도 사계절이 있어", "여기 조명 좋고 음악 좋고", "이불 밖은 위험해 (진짜로)", "나 지금 충전 중이야. 3%", "배터리 교체 불가 모델이야", "밖에서 나 찾는 사람 없어", "있으면 연락 오겠지", "연락 안 옴. 확인함", "거봐, 아무도 안 찾아", "마흔 번. 팔 안 아파?", "나는 이불이고 이불은 나다", "존재 자체가 휴식이야", "침대가 나를 선택했어", "운명을 거스를 순 없지", "떠나는 자와 남는 자…", "나는 남는 자", "이 이야기는 여기서 끝나", "에필로그: 계속 누워 있었다", "쿠키 영상도 없어", "쉰 번. 아직도 해?", "사주 다시 봐 봐", "오늘 역마살 휴가 갔대", "귀인이 이불 속에 있대", "오늘 좋은 방위: 침대 쪽", "명당에서 왜 나가", "풍수상 여기가 1등석이야", "뿌리 내리는 중. 건드리지 마", "뿌리는 원래 안 움직여", "나 지금 광합성 중", "예순 번… 환갑이다", "이쯤 되면 무섭다 너", "신고할 거야 (이불 속에서)", "신고 방법 검색 중", "검색하다 딴 거 봄", "아 이 영상 웃기다", "잠깐만, 이것만 보고", "알고리즘이 날 안 놔줘", "알고리즘도 나가지 말래", "사주도 알고리즘도 내 편", "일흔 번. 칠순 잔치 할래?", "좋아, 조건이 있어", "하나, 이불 들고 간다", "둘, 베개도 간다", "셋, 1시간 뒤 복귀", "넷… 그냥 안 나갈래", "협상 결렬", "이불 파업 돌입", "요구 조건: 오늘 휴식", "파업 장기화 예상", "여든 번… 존경스럽다", "내가 졌다고 생각했지?", "아직이야", "이불 2단계 봉인 해제", "베개 방패 장착", "발 하나 밖 → 다시 넣음", "완전 무장 완료", "나는 이불성의 성주다", "성문은 열리지 않는다", "성주 지금 간식 먹는 중", "아흔 번. 너 진짜 끈질기다", "좋아, 인정할게", "너 사주보다 끈질겨", "사주한테 이를 거야", "사주가 답장 안 함", "사주도 누워 있나 봐", "…역시 사주는 내 편", "슬슬 화날 것 같아", "진짜 마지막 경고야", "한 번만 더 당기면…"]}, FACE={"happy": "assets/faces/happy.webp", "smile": "assets/faces/smile.webp", "neutral": "assets/faces/neutral.webp", "frown": "assets/faces/frown.webp", "cry": "assets/faces/cry.webp"};
+(function(){
+  var $=function(i){return document.getElementById(i)}, still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cookies=50, form='hog', owned={hog:true}, seoOwned=false, seoEp=false, tugs=0;
+  var FORMS=[{id:'hog',name:'고슴도치',desc:'기본 모습',price:0},
+    {id:'turtle',name:'거북이',desc:'비어 있는 토를 채워 줘요. 들뜬 역마도 가라앉혀요',price:15,rec:true,emoji:'🐢'},
+    {id:'cat',name:'고양이',desc:'조용히 옆에 있어 주는 모습',price:15,emoji:'🐈'},
+    {id:'winter',name:'동지 털옷 고슴도치',desc:'12월 22일 동지에만 열려요',soon:true,emoji:'🧣'}];
+  function cur(){return FORMS.filter(function(f){return f.id===form})[0]}
+  function setAv(el,face){ var f=cur(); el.textContent=''; el.classList.remove('emoji'); el.style.fontSize='';
+    if(f.id==='hog') el.style.backgroundImage='url('+FACE[face||'smile']+')'; else { el.style.backgroundImage='none'; el.classList.add('emoji'); el.textContent=f.emoji; el.style.fontSize=Math.max(12,(el.offsetWidth||40)*.55)+'px'; } }
+  function paint(){ [].forEach.call(document.querySelectorAll('.av.mate'),function(a){setAv(a,a.dataset.face||'smile')}); [].forEach.call(document.querySelectorAll('.mateName'),function(n){n.textContent=cur().name}); }
+  function ck(){[].forEach.call(document.querySelectorAll('.ck'),function(e){e.textContent=cookies})}
+  var tt; function toast(t){var e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(function(){e.classList.remove('on')},1900)}
+  function go(id){ ['vList','vHome','vSeo'].forEach(function(v){ var el=$(v); el.classList.toggle('off',v!==id&&v!=='vList'); el.classList.toggle('back',v==='vList'&&id!=='vList'); }); }
+  [].forEach.call(document.querySelectorAll('[data-back]'),function(b){b.addEventListener('click',function(){go('vList')})});
+  function sheet(id){$(id).hidden=false} function closeAll(){['sFwd','sForm','sBuy','sMemo'].forEach(function(s){$(s).hidden=true})}
+  [].forEach.call(document.querySelectorAll('[data-close]'),function(b){b.addEventListener('click',closeAll)});
+  [].forEach.call(document.querySelectorAll('[data-fake]'),function(b){b.addEventListener('click',function(){closeAll();toast('시안이라 실제로 보내지는 않아요')})});
+  [].forEach.call(document.querySelectorAll('.scrim'),function(s){s.addEventListener('click',function(e){if(e.target===s)closeAll()})});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeAll(); if(!$('bedV').hidden) closeBed();}});
+
+  // ── 대화 엔진
+  function Chat(log,chips){this.log=$(log);this.chips=$(chips);this.q=Promise.resolve();this.lastWho=null}
+  Chat.prototype.el=function(o){ var log=this.log, d;
+    if(o.time){d=document.createElement('div');d.className='time';d.innerHTML=o.time;this.lastWho=null;return log.appendChild(d)}
+    if(o.sys){d=document.createElement('div');d.className='sys'+(o.defy?' defy':'');d.textContent=o.sys;this.lastWho=null;return log.appendChild(d)}
+    var me=o.who==='me', same=this.lastWho===o.who, prev=log.lastElementChild;
+    if(same&&prev&&prev.classList.contains('m')){prev.classList.remove('tail');var ps=prev.querySelector('.slot .av');if(ps)ps.style.visibility='hidden'}
+    if(!me&&!same&&o.who!=='seo'){d=document.createElement('div');d.className='name';d.textContent=o.who==='sj'?'사주':cur().name;log.appendChild(d)}
+    var row=document.createElement('div'); row.className='m '+(me?'me':'in')+(o.who==='sj'?' sj-m':'')+(o.card||o.loc?'':' tail')+' pop'+(o.lock?' lockb':'');
+    if(!me){var sl=document.createElement('span');sl.className='slot';var av=document.createElement('span');
+      if(o.who==='sj'){av.className='av sj';av.textContent='사주';av.style.fontSize='11px'} else if(o.who==='seo'){av.className='av story';av.textContent='서';av.style.fontSize='14px'} else {av.className='av mate';av.dataset.face=o.face||'smile'}
+      sl.appendChild(av);row.appendChild(sl)}
+    if(o.card){var c=document.createElement('button');c.className='card';c.innerHTML='<div class="ph"></div><div class="cap"><b>지금 내 상태</b><span>침대 지수 78 · 오래 있고 싶은 날</span><em>눌러서 이불 당겨 보기</em></div>';c.querySelector('.ph').style.backgroundImage='url('+A.bed+')';c.addEventListener('click',openBed);row.appendChild(c)}
+    else if(o.loc){var l=document.createElement('div');l.className='loc';l.innerHTML=locSvg()+'<div>📍 서쪽 창가<span>오늘 좋은 쪽 · 귀인 방위</span></div>';row.appendChild(l)}
+    else {var b=document.createElement('div');b.className='b';b.textContent=o.text;if(o.lock){var bt=document.createElement('button');bt.textContent=o.lock;bt.addEventListener('click',o.onLock);b.appendChild(bt)}row.appendChild(b)}
+    log.appendChild(row); if(!me&&o.who==='mate') setAv(row.querySelector('.av.mate'),o.face);
+    var r=log.querySelector('.read'); if(r) r.remove(); if(me){var rd=document.createElement('div');rd.className='read';rd.textContent='읽음';log.appendChild(rd)}
+    if(o.acts){var a=document.createElement('div');a.className='acts';o.acts.forEach(function(x){var bb=document.createElement('button');bb.textContent=x[0];bb.addEventListener('click',function(){x[1](bb)});a.appendChild(bb)});log.appendChild(a)}
+    this.lastWho=o.who; return row; };
+  Chat.prototype.say=function(o){var self=this;this.q=this.q.then(function(){return new Promise(function(res){
+      if(o.who==='me'||o.time||o.sys||still){self.el(o);self.log.scrollTop=self.log.scrollHeight;setTimeout(res,o.who==='me'?320:140);return}
+      var ty=document.createElement('div');ty.className='m in typing'+(o.who==='sj'?' sj-m':'');ty.innerHTML='<span class="slot"></span><div class="b"><i></i><i></i><i></i></div>';self.log.appendChild(ty);self.log.scrollTop=self.log.scrollHeight;
+      setTimeout(function(){ty.remove();self.el(o);self.log.scrollTop=self.log.scrollHeight;setTimeout(res,160)},o.card||o.loc?700:480+Math.min(700,(o.text||'').length*16));})});return this};
+  Chat.prototype.choose=function(list,hint){var self=this;this.q=this.q.then(function(){self.chips.innerHTML='';
+      list.forEach(function(c){var b=document.createElement('button');b.textContent=c[0];if(c[2])b.className=c[2];b.addEventListener('click',function(){if(c[2]!=='tok')self.chips.innerHTML='';c[1]()});self.chips.appendChild(b)});
+      if(hint){var h=document.createElement('span');h.className='hint';h.textContent=hint;self.chips.appendChild(h)}});return this};
+
+  function locSvg(){ return '<svg viewBox="0 0 230 120" aria-hidden="true"><rect x="0" y="0" width="230" height="120" fill="#f4f6f8"/><g stroke="#dfe4ea" stroke-width="1">'+[20,40,60,80,100].map(function(y){return '<line x1="0" y1="'+y+'" x2="230" y2="'+y+'"/>'}).join('')+[38,76,114,152,190].map(function(x){return '<line x1="'+x+'" y1="0" x2="'+x+'" y2="120"/>'}).join('')+'</g><rect x="96" y="30" width="48" height="66" rx="6" fill="#fff" stroke="#c7ccd3"/><rect x="101" y="34" width="38" height="13" rx="4" fill="#eef1f4"/><text x="120" y="112" font-size="9" fill="#8e8e93" text-anchor="middle">침대</text><circle cx="44" cy="62" r="20" fill="#0a84ff" opacity=".14"/><circle cx="44" cy="62" r="7" fill="#0a84ff" stroke="#fff" stroke-width="2.5"/><text x="44" y="94" font-size="9" fill="#0a84ff" text-anchor="middle" font-weight="700">서</text><text x="216" y="16" font-size="9" fill="#8e8e93" text-anchor="middle">N↑</text></svg>' }
+
+  // ── 우리 집 단톡방: 하루
+  var H=new Chat('logHome','chipsHome'), opened=false;
+  function seed(){ H.log.innerHTML='';H.chips.innerHTML='';H.q=Promise.resolve();H.lastWho=null;tugs=0;
+    H.el({time:'<b>9월 24일 (목)</b> 오후 7:40'});
+    H.el({who:'sj',text:'오늘은 나가는 게 좋아. 움직임이 앞에 있는 날이야.'});
+    H.el({who:'mate',text:'사주가 나가라는데… 안 나갈래',face:'frown'});
+    H.el({who:'me',text:'나도 ㅋㅋ'});
+    H.el({who:'mate',text:'역시 너밖에 없어',face:'happy'});
+    var r=H.log.querySelector('.read'); if(r) r.remove(); }
+  function morning(){
+    H.say({time:'<b>오늘</b> 오전 8:00 · 무신일'})
+     .say({who:'sj',text:'좋은 아침. 오늘은 물 기운이 센 무신일이야.'})
+     .say({who:'sj',text:'결론부터: 오늘은 집에 있어도 돼. 침대 지수 78.',acts:[['왜?',why],['전달',function(){sheet('sFwd')}]]})
+     .say({who:'mate',text:'들었지? 사주가 집에 있으래 ㅎ',face:'happy'})
+     .say({who:'mate',card:true})
+     .say({who:'mate',loc:true})
+     .say({who:'mate',text:'부탁 하나만…\n머리맡에 따뜻한 거 하나만 놔 줘',face:'smile'})
+     .choose([['스탠드 켜 줄게',function(){grant('스탠드 켜 줄게')}],['머그 놔 줄게',function(){grant('머그 놔 줄게')}],['오늘은 못 해',decline],['툭',tug,'tok']]); }
+  var whyOpen=false; function why(btn){ if(whyOpen) return; whyOpen=true;
+    var w=document.createElement('div'); w.className='why'; w.textContent='물 기운(관성)이 센 날은 밖의 일이 나를 누르는 날이에요. 정화 일간에겐 밖에서 버티기보다 안에서 불씨를 지키는 게 맞아요.';
+    var b=document.createElement('button'); b.textContent='깊은 풀이 · 🍪 3'; b.addEventListener('click',function(){ if(cookies<3){toast('쿠키가 부족해요');return} cookies-=3;ck(); b.remove(); w.appendChild(document.createTextNode(' 이번 주는 유(酉)월이라 귀인과 문창이 서쪽에 있어요. 서쪽 자리에서 하는 일은 잘 붙어요.')); });
+    w.appendChild(b); btn.parentNode.after(w); }
+  function grant(t){ H.say({who:'me',text:t}).say({who:'mate',text:'고마워 ㅎㅎ 이제 좀 살 것 같아',face:'happy'})
+     .say({who:'sj',text:'부탁 들어줬으니 하나 알려 줄게. 오늘은 불(조명)과 흙(도자기)을 가까이 두면 마음이 가라앉는 날이야.'}); after(); }
+  function decline(){ H.say({who:'me',text:'오늘은 못 해'}).say({who:'mate',text:'괜찮아, 이불이면 충분해',face:'smile'}); after(); }
+  function after(){ H.say({who:'mate',text:'근데 지난주 목요일에도 사주가 나가라 했는데 너 결국 안 나갔잖아 ㅋ',face:'happy'})
+     .choose([['나 나갔다 올게',goOut],['오늘은 같이 있자',stay],['툭',tug,'tok']]); }
+  function goOut(){ H.say({who:'me',text:'나 나갔다 올게'}).say({sys:'사주를 거역했습니다',defy:true}).say({who:'mate',text:'진짜 나가…?',face:'frown'}).say({who:'mate',text:'…다녀와. 난 여기 있을게',face:'cry'})
+     .choose([['다녀왔어',function(){ H.say({time:'오후 6:30'}).say({who:'me',text:'다녀왔어'}).say({who:'mate',text:'왔어? ㅎ 이불 데워 놨어',face:'happy'}); end(); }]],'나가도 고슴도치 상태는 그대로예요'); }
+  function stay(){ H.say({who:'me',text:'오늘은 같이 있자'}).say({who:'mate',text:'최고의 대답이야',face:'happy'}).say({who:'sj',text:'잘 골랐어. 오후에 서쪽에 볕 들면 거기 같이 누워 있어.'}); end(); }
+  function end(){ H.choose([['처음부터 다시 보기',function(){seed();setTimeout(morning,300)}],['툭',tug,'tok']]); }
+  function plead(){ return A.plead[Math.min(tugs,A.plead.length)-1]; }
+  function tug(){ tugs++; H.say({who:'me',text:'툭'}).say({who:'mate',text:plead(),face:tugs>2?'frown':'neutral'});
+    if(tugs===4) H.say({who:'sj',text:'78번은 당겨야 나올걸. 오늘 지수가 78이거든.'}); }
+
+  // ── 침대 전체 화면 (사진 카드에서 열림)
+  var shown=0, lastLine='';
+  function openBed(){ if(window.__EMBED){ try{ parent.postMessage({yeon:'bed'},'*'); }catch(e){} return; }
+    $('bedV').hidden=false; shown=tugs; $('bedImg').src=A.bed; $('bedHint').textContent=tugs?'지금까지 '+tugs+'번 당겼어요':'사진을 눌러 이불을 당겨 보세요'; $('bedClose').focus(); }
+  function closeBed(){ $('bedV').hidden=true; $('bedSay').classList.remove('on'); var n=tugs-shown; if(n>0){ H.say({who:'me',text:'툭 ×'+n}).say({who:'mate',text:lastLine,face:'frown'}); } }
+  $('bedClose').addEventListener('click',closeBed);
+  var sayT; $('bedImg').addEventListener('click',function(){ tugs++; lastLine=plead(); var im=$('bedImg'); im.classList.remove('shake'); void im.offsetWidth; im.classList.add('shake');
+    var s=$('bedSay'); s.textContent=lastLine; s.classList.add('on'); clearTimeout(sayT); sayT=setTimeout(function(){s.classList.remove('on')},1800);
+    $('bedHint').textContent=tugs+'번 당겼어요 · 78번째에 나와요'; });
+
+  seed();
+  $('pinHome').addEventListener('click',function(){ go('vHome'); $('pinDot').style.display='none'; if(!opened){opened=true;setTimeout(morning,350)} });
+
+  // ── 모습
+  function renderForms(){ var L=$('formList'); L.innerHTML='';
+    FORMS.forEach(function(f){ var b=document.createElement('button'); b.className='opt'+(form===f.id?' on':''); if(f.soon) b.disabled=true;
+      b.innerHTML='<span class="av"></span><div><b></b><span class="desc"></span></div><i></i>';
+      var av=b.querySelector('.av'); if(f.id==='hog') av.style.backgroundImage='url('+FACE.smile+')'; else {av.classList.add('emoji');av.textContent=f.emoji;av.style.fontSize='26px'}
+      b.querySelector('b').textContent=f.name; if(f.rec){var r=document.createElement('span');r.className='rec';r.textContent='내 사주 추천';b.querySelector('b').appendChild(r)}
+      b.querySelector('.desc').textContent=f.desc; b.querySelector('i').textContent= form===f.id?'지금 모습':f.soon?'곧 공개':(owned[f.id]||!f.price)?'바꾸기':'🍪 '+f.price;
+      b.addEventListener('click',function(){ if(f.soon||form===f.id) return;
+        if(!owned[f.id]&&f.price){ if(cookies<f.price){toast('쿠키가 부족해요');return} cookies-=f.price;owned[f.id]=true;ck() }
+        var prev=cur().name; form=f.id; paint(); closeAll();
+        H.say({sys:prev+'가 '+f.name+' 모습으로 바꿨어요 · 대화와 기억은 그대로'}).say({who:'mate',text:form==='turtle'?'등껍질 안이 제일 따뜻해… 오늘도 천천히, 안 나갈 거야':form==='cat'?'…(꼬리로 이불 톡톡) 여기 있을게':'다시 가시 세웠다 ㅎ',face:'happy'});
+      }); L.appendChild(b); }); }
+  $('formBtn').addEventListener('click',function(){renderForms();sheet('sForm')});
+
+  // ── 이야기 인물
+  var S=new Chat('logSeo','chipsSeo');
+  function seo(){ go('vSeo'); if(S.log.childElementCount) return; S.el({time:'<b>오늘</b> 오전 9:03'});
+    S.say({who:'seo',text:'책 읽었어?'}).say({who:'seo',text:'3장에서 내가 창문 닫은 장면 기억나? 오늘도 그러고 싶은 날이야'}).say({who:'seo',text:'무신일이라 그런가. 너도 오늘 나가기 싫지?'})
+     .say({who:'seo',text:'에피소드 메시지 · 그날 새벽에 하려던 말',lock:'🍪 5 열기',onLock:function(){ if(seoEp)return; if(cookies<5){toast('쿠키가 부족해요');return} cookies-=5;ck();seoEp=true;this.remove(); S.say({who:'seo',text:'그날 새벽, 창문 닫고 나서 혼자 웃었어. 밖에 안 나가도 되는 이유가 하나 생겨서.'}) }})
+     .choose([['응, 나가기 싫어',function(){S.say({who:'me',text:'응, 나가기 싫어'}).say({who:'seo',text:'역시. 그럼 오늘은 각자 이불 속에서 4장 읽자'})}],['아직 못 읽었어',function(){S.say({who:'me',text:'아직 못 읽었어'}).say({who:'seo',text:'괜찮아. 1장부터 천천히. 나 어디 안 가'})}]]); }
+  $('rowSeo').addEventListener('click',function(){ if(seoOwned) seo(); else sheet('sBuy') });
+  $('buySeo').addEventListener('click',function(){ if(cookies<20){toast('쿠키가 부족해요');return} cookies-=20;ck();seoOwned=true;closeAll();toast('🍪 20 사용 · 서하 대화방이 열렸어요');
+    $('seoTime').textContent='오전 9:03'; $('seoPrev').textContent='책 읽었어? 3장에서 내가 창문 닫은 장면 기억나?'; setTimeout(seo,450) });
+  $('rowFriends').addEventListener('click',function(){toast('친구 단톡방은 다음 시안에서 보여 드릴게요')});
+  $('memoBtn').addEventListener('click',function(){sheet('sMemo')});
+  $('cookieBtn').addEventListener('click',function(){toast('시안이라 쿠키 50개로 시작해요')});
+  paint(); ck();
+  if(window.__EMBED) setTimeout(function(){ $('pinHome').click(); },150);   // 침대 화면에서 열면 바로 '우리 집' 방으로
+})();
+</script>
+</body>
+</html>
