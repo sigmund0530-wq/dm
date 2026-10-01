@@ -292,8 +292,8 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
   // 단계 사이는 이불이 발치 쪽으로 눌려 내려가며(아래 기준 세로 압축) 다음 단계로 넘어감.
   var cloth=null, stagesR=null, lastV=score, lastPh=0, lastAmp=0;
   function yeonStages(img){
-  var OFF=[[-1228,5],[-932,4],[-626,-1],[-308,0],[0,0]], X0=1229,Y0=12,W=316,H=496,N=W*H;
-  var MR={x0:30,x1:285,y0:8,y1:485,r:10};
+  var OFF=[[-1228,5],[-932,4],[-626,-1],[-308,0],[0,0]], X0=1230,Y0=12,SW=305,W=316,H=496,N=W*H;
+  var MR={x0:30,x1:294,y0:8,y1:485,r:10};
   // 단계별 이불 윗선(손으로 딴 값, 이 사진 기준 좌표). 흰 천 위 흰 이불이라 자동 감지 대신 사용
   var TOPS=[[[0,115],[50,112],[150,110],[165,107],[200,97],[240,84],[290,63],[316,60]],
             [[0,180],[20,176],[100,172],[200,171],[290,166],[316,166]],
@@ -301,7 +301,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
             [[0,298],[25,294],[150,289],[290,287],[316,287]]];                          // 매트리스(시트+베개) 영역
   function inMat(x,y){ var r=MR.r, cx=Math.max(MR.x0+r,Math.min(MR.x1-r,x)), cy=Math.max(MR.y0+r,Math.min(MR.y1-r,y)); return (x-cx)*(x-cx)+(y-cy)*(y-cy)<=r*r; }
   function grab(k){ var c=document.createElement('canvas'); c.width=W; c.height=H; var x=c.getContext('2d');
-    x.drawImage(img,X0+OFF[k][0],Y0+OFF[k][1],W,H,0,0,W,H); return x.getImageData(0,0,W,H); }
+    x.imageSmoothingQuality='high'; x.drawImage(img,X0+OFF[k][0],Y0+OFF[k][1],SW,H,0,0,W,H); return x.getImageData(0,0,W,H); }
   var F=[0,1,2,3,4].map(grab), base=F[4].data;
   function blur(a,rad){ var b=new Float32Array(N),o=new Float32Array(N),x,y,s,i;
     for(y=0;y<H;y++){ s=0; for(x=-rad;x<W;x++){ if(x+rad<W) s+=a[y*W+x+rad]; if(x-rad-1>=0) s-=a[y*W+x-rad-1]; if(x>=0) b[y*W+x]=s/(2*rad+1);} }
@@ -329,12 +329,25 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
         o[j2*4+3]=a2*255; }
       for(var xs=60;xs<270;xs+=6){ for(var yy=k?128:14;yy<MR.y1;yy++){ if(o[(yy*W+xs)*4+3]>200){ top.push(yy); break; } } } top.sort(function(a,b){return a-b});
       // 이불 윗선을 열마다 찾아서: 선 아래는 이불로 꽉 채우고(구멍·얼룩 없음), 선 위(베개·시트)는 전부 지움
+      var cl=new Float32Array(N), lu=new Float32Array(N); for(var i9=0;i9<N;i9++){ cl[i9]=d[i9*4+2]-d[i9*4]; lu[i9]=d[i9*4]*.3+d[i9*4+1]*.59+d[i9*4+2]*.11; }
+      var clb=blur(cl,3), lub=blur(lu,2), HANG=new Float32Array(N), bc=new Float32Array(N); for(var i8=0;i8<N;i8++) bc[i8]=base[i8*4+2]-base[i8*4];
+      var bcb=blur(bc,3); for(var i7=0;i7<N;i7++) HANG[i7]=ss(.5,2.5,clb[i7])*ss(.6,2,clb[i7]-bcb[i7])*ss(205,225,lub[i7]);   // 흰 천 + 바닥 사진엔 없던 것
+      // 줄마다 이불 바깥 끝(왼·오른쪽) 찾기 → 위아래로 중앙값 평활 → 매끈한 외곽선
+      var EXL=new Float32Array(H), EXR=new Float32Array(H);
+      for(var y11=0;y11<H;y11++){ var lx=MR.x0, rx=MR.x1, row=y11*W;
+        for(var x11=0;x11<MR.x0+2;x11++){ if(HANG[row+x11]>.5&&HANG[row+x11+1]>.5&&HANG[row+x11+2]>.5){ lx=x11; break; } }
+        for(var x12=W-1;x12>MR.x1-2;x12--){ if(HANG[row+x12]>.5&&HANG[row+x12-1]>.5&&HANG[row+x12-2]>.5){ rx=x12+1; break; } }
+        EXL[y11]=lx; EXR[y11]=rx; }
+      function med(A){ var B=new Float32Array(H); for(var y=0;y<H;y++){ var w=[]; for(var dd=-9;dd<=9;dd++) w.push(A[Math.max(0,Math.min(H-1,y+dd))]); w.sort(function(a,b){return a-b}); B[y]=w[9]; }
+        var C=new Float32Array(H); for(var y2=0;y2<H;y2++){ var s2=0,n2=0; for(var e2=-4;e2<=4;e2++){ var yy=y2+e2; if(yy>=0&&yy<H){ s2+=B[yy]; n2++; } } C[y2]=s2/n2; } return C; }
+      EXL=med(EXL); EXR=med(EXR);
+      var FOOT=MR.y1-2-Math.max(0,OFF[k][1]);                      // 이 단계 사진 속 침대 발치(사진마다 몇 px씩 위아래로 다름)
       var T1=TOPS[0], tk=top.length?top[top.length>>1]:0, edge=new Float32Array(W);
       for(var x3=0;x3<W;x3++){
         var TL=TOPS[k]; for(var q=1;q<TL.length;q++){ if(x3<=TL[q][0]){ var A=TL[q-1],B=TL[q]; edge[x3]=A[1]+(B[1]-A[1])*(x3-A[0])/(B[0]-A[0]); break; } } }
-      for(var x6=0;x6<W;x6++) for(var y6=0;y6<H;y6++){ var j6=(y6*W+x6)*4, f6=ss(edge[x6]-1.5,edge[x6]+1.5,y6);
+      for(var x6=0;x6<W;x6++) for(var y6=0;y6<H;y6++){ var j6=(y6*W+x6)*4, f6=ss(edge[x6]-1.5,edge[x6]+1.5,y6); if(y6>FOOT+1){ o[j6+3]=0; continue; }
         if(inMat(x6,y6)) o[j6+3]= f6*255;                                // 매트리스 안: 이불 윗선 아래는 모두 이불
-        else o[j6+3]=0; }                                                // 매트리스 밖은 잘라냄(흰 배경과 섞여 얼룩지므로) — 그림자는 아래에서 따로 입힘
+        else { var hg= y6<edge[x6]-2 ? 0 : ss(EXL[y6]-1.2,EXL[y6]+1.2,x6)*(1-ss(EXR[y6]-1.2,EXR[y6]+1.2,x6)); o[j6]=d[j6]; o[j6+1]=d[j6+1]; o[j6+2]=d[j6+2]; o[j6+3]=hg*255; } }   // 매트리스 밖: 줄마다 잰 이불 외곽선 안쪽만(원래 색)
       top=[]; for(var x10=60;x10<270;x10+=6) top.push(Math.round(edge[x10])); top.sort(function(a,b){return a-b});
     }
     x.putImageData(im,0,0);
@@ -344,7 +357,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
       for(var y7=t0;y7<H-14;y7+=3){ for(var x7=0;x7<W;x7++){ if(o[(y7*W+x7)*4+3]>200){ ls.push(x7); break; } } for(var x8=W-1;x8>=0;x8--){ if(o[(y7*W+x8)*4+3]>200){ rs.push(x8); break; } } }
       ls.sort(function(a,b){return a-b}); rs.sort(function(a,b){return a-b}); lx=ls[Math.floor(ls.length*.6)]; rx=rs[Math.floor(rs.length*.4)];   // 대부분 줄의 가장자리(튀어나온 한두 줄 무시)
       for(var x9=lx+20;x9<rx-20;x9+=6) for(var y9=H-1;y9>=0;y9--){ if(o[(y9*W+x9)*4+3]>200){ bots.push(y9); break; } }
-      bots.sort(function(a,b){return a-b}); ext={l:lx,r:rx,b:bots[Math.floor(bots.length*.5)]}; }
+      bots.sort(function(a,b){return a-b}); ext={l:lx,r:rx,b:FOOT}; }
     if(k<4){ var sc2=document.createElement('canvas'); sc2.width=W; sc2.height=H; var sx2=sc2.getContext('2d');
       sx2.shadowColor='rgba(0,0,0,.38)'; sx2.shadowBlur=6; sx2.shadowOffsetY=0; sx2.drawImage(c,0,0); c=sc2; }   // 이불 가장자리 그림자
     return {c:c, top: top.length? top[top.length>>1] : 0, ext:ext}; }
@@ -503,10 +516,10 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
     x.clearRect(0,0,cv.width,cv.height); x.imageSmoothingQuality='high';
     var breath=Math.sin(ph*1.3)*amp*.9;                                  // 이불이 살짝 숨 쉼
     // 이불을 매트리스 안에 맞춰 그림: 좌우는 매트리스 폭(+2px), 아래는 매트리스 끝단. top은 윗선 목표 위치
-    function put(k,top,al){ if(al<=.004||k>3) return; var L=R.layers[k], e=L.ext, MR=R.MR, src=k?Math.max(0,T[k]-40):0, sb=Math.min(R.H,e.b+6);
-      var DB=MR.y1+3, sc=(DB-top)/(e.b-T[k]), hs=(MR.x1-MR.x0+8)/(e.r-e.l), sl=Math.max(0,e.l-6), sr=Math.min(R.W,e.r+6);
+    function put(k,top,al){ if(al<=.004||k>3) return; var L=R.layers[k], e=L.ext, MR=R.MR, src=k?Math.max(0,T[k]-40):0, sb=R.H;
+      var DB=MR.y1+3, sc=(DB-top)/(e.b-T[k]), hs=1, sl=0, sr=R.W;   // 가로는 사진 그대로(옆으로 늘어진 이불 유지), 세로만 윗선·발치에 맞춤
       x.globalAlpha=Math.min(1,al);
-      var X0=(MR.x0-4-(e.l-sl)*hs)*sx, Y0=(DB-(e.b-src)*sc)*sy, WW=(sr-sl)*hs*sx, HH=(sb-src)*sc*sy, g=6*sx;
+      var X0=0, Y0=(DB-(e.b-src)*sc)*sy, WW=(sr-sl)*hs*sx, HH=(sb-src)*sc*sy, g=6*sx;
       x.drawImage(L.c, sl,src,sr-sl,sb-src, X0,Y0,WW,HH);
       // 이불 뒤(매트리스 안, 윗선 조금 아래부터)를 이불색으로 채움 → 사진 가장자리 틈으로 흰 시트가 비치지 않음
       var fy=(top+36)*sy; if(fy<DB*sy){ x.save(); x.globalCompositeOperation='destination-over'; x.fillStyle='#e6e6e8';
