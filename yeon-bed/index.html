@@ -261,6 +261,7 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
 .bm-hi.typing i:nth-child(2){animation-delay:.15s}.bm-hi.typing i:nth-child(3){animation-delay:.3s}
 .bm-hi small{display:block;margin-top:2px;font-size:10.5px;color:#8e8e93}
 .bm-hi:focus-visible{outline:2px solid #0a84ff;outline-offset:3px}
+#bmHi{white-space:nowrap}
 .bm-hi.bye{opacity:0;transform:scale(.85);transition:opacity .18s,transform .18s}
 @keyframes bmHiIn{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.bm-hi,.bm-hi.typing i{animation:none}}
@@ -329,7 +330,7 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
             <span class="bm-bubble saju-voice" id="bmSaju" aria-hidden="true"><small>사주</small><span id="bmSajuT"></span></span>
           </button>
           <div class="bm-talk" id="bmTalk" aria-live="polite"></div>
-          <button type="button" class="bm-hi" id="bmHi" hidden aria-label="고슴도치가 말을 걸었어요 · 우리 집 단톡방 열기"><span id="bmHiT"></span></button>
+          <button type="button" class="bm-hi" id="bmHi" hidden aria-label="고슴도치: 눌러도 안 나가 · 눌러서 쓰다듬기"><span id="bmHiT"></span></button>
           <button type="button" class="bm-dir" id="bmDir" aria-label="침대 머리 방향 설정 · 오늘 좋은 쪽"><b>↑</b><span><em id="bmDirEm">머리 방향 설정하기 ›</em><strong id="bmDirT">오늘 좋은 쪽 · 서쪽</strong></span></button>
           <div class="bm-ruler" aria-hidden="true">
             <span class="bm-end bm-end-top">침대</span>
@@ -875,11 +876,11 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
   (function(){
     var hi=$('bmHi'), hiT=$('bmHiT'); if(!hi) return; var gone=false;
     var still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-    function show(){ if(gone) return; hi.className='bm-hi'; hiT.textContent='왔어?'; hi.hidden=false; }
+    function show(){ if(gone) return; hi.className='bm-hi'; hiT.textContent='눌러도 안 나가'; hi.hidden=false; }
     function bye(){ if(gone||hi.hidden){ gone=true; return; } gone=true; hi.classList.add('bye'); setTimeout(function(){ hi.hidden=true; },200); }
     setTimeout(function(){ if(gone) return; if(still){ show(); return; }
       hi.className='bm-hi typing'; hiT.innerHTML='<i></i><i></i><i></i>'; hi.hidden=false; setTimeout(show,900); }, 1400);
-    hi.addEventListener('click',function(){ bye(); var b=document.getElementById('ynBanner'); if(b) b.click(); });
+    hi.addEventListener('click',function(){ bye(); pet(); });   // 말풍선을 눌러도 쓰다듬기와 같음
     bed.addEventListener('click',bye);
   })();
   if(still){ wave(score,0,1.1); face(score); } else { face(0); requestAnimationFrame(frame); }
