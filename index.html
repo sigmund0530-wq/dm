@@ -306,6 +306,30 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
 .ct-bed{font-size:12px;font-weight:800;color:#9a7419;letter-spacing:0;margin-left:6px}
 .ct-chat{display:flex;flex-direction:column;gap:6px;margin:14px 0}
 .ct-chat p{margin:0;max-width:85%;padding:9px 12px;border-radius:14px 14px 14px 4px;background:#f1ece4;font-size:13px;line-height:1.5}
+
+/* 글로우 테두리: 가운데는 흰색, 가장자리에서 색이 번져 들어오는 파스텔 + 살짝 거친 질감 */
+:root{--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")}
+.glow{--c1:255,214,0;--c2:255,170,60;position:relative;isolation:isolate;background:#fffefb!important;border:0!important;
+  box-shadow:inset 0 0 0 1.5px rgba(var(--c1),.75),inset 0 0 10px 2px rgba(var(--c1),.7),inset 0 0 22px 6px rgba(var(--c2),.32),0 0 12px rgba(var(--c1),.28)!important}
+.glow::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--grain);opacity:.1;mix-blend-mode:multiply;pointer-events:none;z-index:-1;-webkit-mask:radial-gradient(closest-side,transparent 55%,#000);mask:radial-gradient(closest-side,transparent 55%,#000)}
+.g-mon{--c1:196,170,255;--c2:255,182,226}   /* 月 달 · 라벤더 */
+.g-tue{--c1:255,128,104;--c2:255,186,120}   /* 火 불 · 코랄 */
+.g-wed{--c1:92,190,255;--c2:150,225,255}    /* 水 물 · 하늘 */
+.g-thu{--c1:72,216,170;--c2:170,240,200}    /* 木 나무 · 민트 */
+.g-fri{--c1:178,182,190;--c2:225,226,230}   /* 金 쇠 · 은빛 */
+.g-sat{--c1:255,214,0;--c2:255,236,140}     /* 土 흙 · 노랑 */
+.g-sun{--c1:255,150,40;--c2:255,210,110}    /* 日 해 · 주황 */
+.bm-week-d button.glow{background:#fffefb!important;color:#3a352f}
+.bm-week-d button.glow span{color:#8f8a83}
+.bm-week-d button.glow.d2 span{color:#9a7419;font-weight:850}
+.bm-week-d button.glow.today{box-shadow:inset 0 0 0 2px rgba(var(--c1),1),inset 0 0 12px 3px rgba(var(--c1),.85),inset 0 0 24px 8px rgba(var(--c2),.45),0 0 16px rgba(var(--c1),.5)!important}
+.bm-week-d button.glow.today b,.bm-week-d button.glow.today span{color:#1b1b1b;font-weight:900}
+.bm-week-d button.glow.past{opacity:.55}
+.bm-week-d{gap:6px}
+.bm-week-d button{border-radius:12px;padding:8px 0}
+.bm-decline.glow,.bm-test.glow,.hero-scene.glow,.bm-share.glow,.dc-card.glow,.ct-row.glow{border-radius:18px}
+.hero-copy .hero-scene.glow .scene-more{border-top-color:rgba(72,216,170,.35)}
+@media (prefers-reduced-transparency:reduce){.glow::after{display:none}}
 </style>
 </head>
 <body>
@@ -341,17 +365,17 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
         </div>
         <div class="gauge-value"><b id="bmNum">78</b><span>점 / 100</span></div>
         <div class="bm-week" id="bmWeek" aria-label="이번 주 기운"></div>
-        <button type="button" class="bm-decline" id="bmDecline"><span><small id="bmDecK">약속 있었어?</small><b id="bmDecT">사주가 대신 거절해 줄게</b></span><em>카드 보내기 ›</em></button>
+        <button type="button" class="bm-decline glow g-sat" id="bmDecline"><span><small id="bmDecK">약속 있었어?</small><b id="bmDecT">사주가 대신 거절해 줄게</b></span><em>카드 보내기 ›</em></button>
         <div class="bm-caption" aria-live="polite"><b id="bmCap">오늘은 침대에 오래 있고 싶은 날</b><span id="bmHint">이불을 당겨 보세요. 몇 번 만에 나올까요?</span></div>
         <div class="bm-fin" id="bmFin" hidden>
-          <div class="bm-share">
+          <div class="bm-share glow g-sat">
             <p class="bm-share-t" id="bmShareT"></p>
             <p class="bm-share-q" id="bmShareQ"></p>
             <ol class="bm-lines" id="bmLines" hidden></ol>
             <p class="bm-mix" id="bmMix"></p>
             <div class="bm-share-btns"><button type="button" id="bmLinesBtn">이유 전부 보기</button><button type="button" class="pri" id="bmShareBtn">단톡방에 던지기</button></div>
           </div>
-          <button type="button" class="bm-why-btn" id="bmWhyBtn" aria-expanded="false"><span id="bmWhyQ"></span><em>+</em></button>
+          <button type="button" class="bm-why-btn glow g-mon" id="bmWhyBtn" aria-expanded="false"><span id="bmWhyQ"></span><em>+</em></button>
           <div class="bm-why" id="bmWhy" hidden>
             <div class="bm-why-head"><b id="bmWhyLabel"></b><span>예시 풀이</span></div>
             <p class="bm-why-sub" id="bmWhySub"></p>
@@ -364,11 +388,11 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
           </div>
           <div class="bm-next">
             <p class="bm-next-h">이어서 보기</p>
-            <button type="button" class="bm-next-scene" onclick="openDetails('scene-avoid')"><small>오늘의 장면</small><b id="bmNextScene"></b><em>장면 이어보기 ›</em></button>
-            <button type="button" class="bm-next-story" id="bmNextStory"><span class="thumb" id="bmNextThumb"></span><span class="bm-next-txt"><small id="bmNextSig"></small><b id="bmNextTitle"></b><em id="bmNextWhy"></em></span></button>
+            <button type="button" class="bm-next-scene glow g-thu" onclick="openDetails('scene-avoid')"><small>오늘의 장면</small><b id="bmNextScene"></b><em>장면 이어보기 ›</em></button>
+            <button type="button" class="bm-next-story glow g-tue" id="bmNextStory"><span class="thumb" id="bmNextThumb"></span><span class="bm-next-txt"><small id="bmNextSig"></small><b id="bmNextTitle"></b><em id="bmNextWhy"></em></span></button>
           </div>
         </div>
-        <div class="bm-test">
+        <div class="bm-test glow g-wed">
           <div class="bm-test-head"><b>점수 테스트</b><span>확인용 · 배포 전에 지우기</span></div>
           <button type="button" class="bm-skip" id="bmSkip">대사 10개 건너뛰기</button>
           <input type="range" id="bmRange" min="0" max="100" value="78" aria-label="테스트 점수">
@@ -377,7 +401,7 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
       </div>
       <p>내 성격이 아니라 <b>오늘의 기운</b>이에요. 에너지를 아껴 써도 되는 날인지, 가볍게 나가 볼 날인지 매일 알려 드려요.<br>점수가 높을수록 오늘은 안 나가도 되는 날이에요.</p>
 
-      <div class="hero-scene" data-ui="02-03">
+      <div class="hero-scene glow g-thu" data-ui="02-03">
         <span class="ui-num ui-corner-dark">02-03</span>
         <small>오늘의 장면</small>
         <strong>침대에 누운 순간, 오늘 꼭 해야 할 일이 하나 떠오를 수 있어요.</strong>
@@ -393,7 +417,7 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
 
 <section class="ct" data-ui="02B"><div class="section-head"><h2><span class="ui-label"><span class="ui-num">02B</span><span>연락처 · 오늘 누가 집에 있을까</span></span></h2><span class="ui-label"><span>이야기 인물에게도 사주가 있어요</span></span></div>
 <div class="ct-list">
-<button type="button" class="ct-row pin" onclick="openContact('doch')"><span class="ct-ava ct-hog"></span><span class="ct-txt"><b>도치 <i>동거인</i></b><span>대신 목요일엔 서쪽으로 산책 가자. 약속.</span></span><span class="ct-idx"><b>78</b><small>집</small></span></button>
+<button type="button" class="ct-row pin glow g-sat" onclick="openContact('doch')"><span class="ct-ava ct-hog"></span><span class="ct-txt"><b>도치 <i>동거인</i></b><span>대신 목요일엔 서쪽으로 산책 가자. 약속.</span></span><span class="ct-idx"><b>78</b><small>집</small></span></button>
 <button type="button" class="ct-row" onclick="openContact('kairen')"><span class="ct-ava thumb t4"></span><span class="ct-txt"><b>카이렌 <i>북부대공</i></b><span>오늘은 나도 성 밖으로 나가야 한다더군.</span></span><span class="ct-idx out"><b>34</b><small>밖</small></span></button>
 <button type="button" class="ct-row" onclick="openContact('seoha')"><span class="ct-ava thumb t3"></span><span class="ct-txt"><b>서하 <i>팬사인회</i></b><span>오늘 연습 빠질까 말까 고민 중이야.</span></span><span class="ct-idx mid"><b>61</b><small>반반</small></span></button>
 <button type="button" class="ct-row lock" onclick="openContact('yunjae')"><span class="ct-ava thumb t7"></span><span class="ct-txt"><b>윤재 <i>작품을 열면 대화방이 생겨요</i></b><span>오늘은 아무도 안 만나고 싶어.</span></span><span class="ct-idx"><b>88</b><small>집</small></span></button>
@@ -433,7 +457,7 @@ function openDecline(name,s){
     document.getElementById('sheet').innerHTML=`<div class="sub">1:1로 보내기 · ${s>=50?'거절 대행':'약속 잡기'}</div><h2>${s>=50?'사주가 대신 말해 줄게요':'사주가 먼저 말 걸어 줄게요'}</h2>
     <p class="sub">${s>=50?'안 나가는 건 괜찮아요. 어려운 건 말하는 순간이죠. 사주 핑계로 미안함은 줄이고, 다음 약속은 남겨 둬요.':'오늘은 움직이는 기운이 앞에 있어요. 부담 없이 짧게 보자고 먼저 보내 봐요.'}</p>
     <div class="dc-tones">${[['polite','다정하게'],['funny','웃기게'],['short','짧게']].map(function(q){return '<button type="button" class="'+(q[0]===tone?'on':'')+'" data-t="'+q[0]+'">'+q[1]+'</button>'}).join('')}</div>
-    <div class="dc-card" id="dcCard"><small>연 · 오늘의 침대 지수 ${s}</small><strong>${c.h}</strong><p>${c.b}</p><em>받은 사람도 자기 사주로 오늘 지수를 볼 수 있어요 ›</em></div>
+    <div class="dc-card glow g-sat" id="dcCard"><small>연 · 오늘의 침대 지수 ${s}</small><strong>${c.h}</strong><p>${c.b}</p><em>받은 사람도 자기 사주로 오늘 지수를 볼 수 있어요 ›</em></div>
     <textarea id="dcText" readonly aria-label="보낼 문구">${c.h}\n${c.b}\n— 연에서 내 오늘 지수 보기</textarea>
     <button class="share-btn" id="dcCopy">문구 복사해서 카톡에 붙여넣기</button>
     <p class="dc-note">스토리에 올리고 싶다면 9:16 카드로 저장할 수 있어요(친한 친구 공개 추천).</p>`;
@@ -842,13 +866,13 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
     showNext(kind); fin.hidden=false;
   }
   // ── 이번 주 기운: 오늘은 편들어 주고, 이번 주 하루는 나갈 명분을 쥐여 줌 (예시 일진)
-  var WEEK=[['화','29',0],['수','30',1],['목','1',2],['금','2',1],['토','3',0],['일','4',0],['월','5',1]];   // 0 집 · 1 반반 · 2 귀인 방위 열림
+  var WEEK=[['월','28',1,'mon'],['화','29',0,'tue'],['수','30',1,'wed'],['목','1',2,'thu'],['금','2',1,'fri'],['토','3',0,'sat'],['일','4',0,'sun']], TODAY=1;   // 0 집 · 1 반반 · 2 귀인 방위 열림 · 요일 색은 칠요(月火水木金土日)
   function renderWeek(){ var w=$('bmWeek'); if(!w) return; var lowDay=low();
     w.innerHTML='<p class="bm-week-h">'+(lowDay?'오늘은 나가는 날 · 이번 주 쉬는 날도 있어요':'오늘은 집 OK · 이번 주 나갈 명분 하나')+'</p><div class="bm-week-d">'+WEEK.map(function(d,i){
-      var k= i===0 ? (lowDay?2:0) : d[2], lab= i===0?'오늘':['집','반반','귀인'][k];
-      return '<button type="button" class="d'+k+(i===0?' today':'')+'" data-i="'+i+'"><b>'+d[0]+'</b><span>'+lab+'</span></button>'; }).join('')+'</div>';
+      var k= i===TODAY ? (lowDay?2:0) : d[2], lab= i===TODAY?'오늘':['집','반반','귀인'][k];
+      return '<button type="button" class="glow g-'+d[3]+' d'+k+(i===TODAY?' today':'')+(i<TODAY?' past':'')+'" data-i="'+i+'"><b>'+d[0]+'</b><span>'+lab+'</span></button>'; }).join('')+'</div>';
     [].forEach.call(w.querySelectorAll('button'),function(b){ b.onclick=function(){ var d=WEEK[+b.dataset.i];
-      if(+b.dataset.i===0) return; if(typeof openDayDetail==='function') openDayDetail(d[0],d[1],d[2]); }; });
+      if(+b.dataset.i===TODAY) return; if(typeof openDayDetail==='function') openDayDetail(d[0],d[1],d[2]); }; });
     $('bmDecK').textContent= lowDay?'오늘은 나가는 날':'약속 있었어?';
     $('bmDecT').textContent= lowDay?'짧게 보자고 먼저 말해 볼까':'사주가 대신 거절해 줄게';
   }
