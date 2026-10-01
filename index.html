@@ -61,9 +61,9 @@ section{margin-top:32px}.section-head{display:flex;justify-content:space-between
 .bm-head{position:absolute;left:30%;top:2.5%;width:40%;overflow:visible;transform:rotate(-3deg);filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}
 .bm-head .h-wake,.bm-head .h-up,.bm.awake .h-idle{display:none}
 .bm.awake:not(.relief) .h-wake,.bm.awake.relief .h-up{display:inline}
-.bm.awake .bm-coverwrap{position:absolute;inset:0;filter:drop-shadow(0 -5px 7px rgba(0,0,0,.45))}
+.bm.awake .bm-coverwrap{position:absolute;inset:0;filter:drop-shadow(0 -1px 2px rgba(40,28,20,.4)) drop-shadow(0 -6px 10px rgba(40,28,20,.4))}
 .bm-cover{clip-path:inset(100% 0 0 0)}
-.bm-coverwrap{position:absolute;inset:0;filter:drop-shadow(0 -2px 3px rgba(0,0,0,.22));transition:filter .5s ease}
+.bm-coverwrap{position:absolute;inset:0;filter:drop-shadow(0 -1px 1.5px rgba(40,28,20,.35)) drop-shadow(0 -4px 8px rgba(40,28,20,.28));transition:filter .5s ease}
 .bm-cv{position:absolute;inset:0;width:100%;height:100%;display:block}
 .bm-head{display:none}
 #bmHog{filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))}
@@ -493,7 +493,8 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
           var fx0=pl[0]+pl[2]*hog.fx, fy0=pl[1]+pl[3]*hog.fy, frx=pl[2]*hog.frx, fry=pl[3]*hog.fry, fe=Math.max(1.5,pl[2]*.006);
           var m=hogMask||(hogMask=document.createElement('canvas')); if(m.width!==w||m.height!==h){ m.width=w; m.height=h; } var mx=m.getContext('2d');
           mx.setTransform(1,0,0,1,0,0); mx.clearRect(0,0,w,h); mx.shadowColor='#000'; mx.shadowBlur=fe*2; mx.shadowOffsetX=w*2; mx.translate(-w*2,0);
-          mx.fillStyle='#000'; mx.beginPath(); mx.rect(0,0,w*3,fy0); mx.ellipse(fx0,fy0,frx,fry,0,0,Math.PI); mx.fill(); mx.setTransform(1,0,0,1,0,0); mx.shadowColor='transparent';
+          // 눈·코·입만 감싸는 타원(가장자리 부드럽게): 이불이 얼굴을 덮을 때만 이목구비가 보이고, 턱·볼 아래는 이불과 그 그림자가 그대로 보임
+          mx.shadowBlur=pl[2]*.03; mx.fillStyle='#000'; mx.beginPath(); mx.ellipse(fx0,fy0-pl[3]*.012,frx*.78,pl[3]*.085,0,0,Math.PI*2); mx.fill(); mx.setTransform(1,0,0,1,0,0); mx.shadowColor='transparent';
           x.globalCompositeOperation='destination-in'; x.drawImage(m,0,0); x.globalCompositeOperation='source-over'; } });
       if(t0<1||bl>0) requestAnimationFrame(window.__hogDraw);
     };
