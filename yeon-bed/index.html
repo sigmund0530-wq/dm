@@ -920,7 +920,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
   document.getElementById('ynClose').addEventListener('click',close);
   var sj=document.getElementById('bmSaju'); if(sj) sj.addEventListener('click',open);       // 사주 말풍선을 눌러도 단톡방으로
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!chat.hidden) close(); });
-  window.addEventListener('message',function(e){ if(e.data&&e.data.yeon==='bed'){ close(); var bed=document.querySelector('.bm-bed'); if(bed) bed.scrollIntoView({block:'center',behavior:'smooth'}); } });  // 대화 속 침대 사진 → 메인 침대로
+  window.addEventListener('message',function(e){ if(e.data&&e.data.yeon==='content'){ var d=e.data; close(); if(d.kind==='scene'&&typeof openDetails==='function') openDetails('scene-avoid'); else if(typeof openStory==='function') openStory(d.title,d.sub,d.cls); return; } if(e.data&&e.data.yeon==='bed'){ close(); var bed=document.querySelector('.bm-bed'); if(bed) bed.scrollIntoView({block:'center',behavior:'smooth'}); } });  // 대화 속 침대 사진 → 메인 침대로
 })();
 </script>
 </body></html>
