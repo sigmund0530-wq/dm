@@ -340,14 +340,26 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
         EXL[y11]=lx; EXR[y11]=rx; }
       function med(A){ var B=new Float32Array(H); for(var y=0;y<H;y++){ var w=[]; for(var dd=-9;dd<=9;dd++) w.push(A[Math.max(0,Math.min(H-1,y+dd))]); w.sort(function(a,b){return a-b}); B[y]=w[9]; }
         var C=new Float32Array(H); for(var y2=0;y2<H;y2++){ var s2=0,n2=0; for(var e2=-4;e2<=4;e2++){ var yy=y2+e2; if(yy>=0&&yy<H){ s2+=B[yy]; n2++; } } C[y2]=s2/n2; } return C; }
+      var tmin=1e9; for(var q7=0;q7<TOPS[k].length;q7++) tmin=Math.min(tmin,TOPS[k][q7][1]); var y0e=Math.round(tmin+6); for(var y13=0;y13<y0e&&y13<H;y13++){ EXL[y13]=EXL[y0e]; EXR[y13]=EXR[y0e]; }
       EXL=med(EXL); EXR=med(EXR);
       var FOOT=MR.y1-2-Math.max(0,OFF[k][1]);                      // 이 단계 사진 속 침대 발치(사진마다 몇 px씩 위아래로 다름)
       var T1=TOPS[0], tk=top.length?top[top.length>>1]:0, edge=new Float32Array(W);
       for(var x3=0;x3<W;x3++){
         var TL=TOPS[k]; for(var q=1;q<TL.length;q++){ if(x3<=TL[q][0]){ var A=TL[q-1],B=TL[q]; edge[x3]=A[1]+(B[1]-A[1])*(x3-A[0])/(B[0]-A[0]); break; } } }
+      // 손으로 딴 선 근처(위 12px~아래 8px)에서 사진 속 실제 이불 끝단(부푼 가장자리)을 열마다 찾아 따라감
+      var ldf=new Float32Array(N); for(var i5=0;i5<N;i5++) ldf[i5]=Math.abs(lu[i5]-(base[i5*4]*.3+base[i5*4+1]*.59+base[i5*4+2]*.11));
+      var ldb=blur(ldf,1), ref=new Float32Array(W);
+      for(var x4=0;x4<W;x4++){ var e0=edge[x4]; ref[x4]=e0; for(var y4=Math.round(e0-7);y4<e0+5;y4++){ if(y4<1) continue; var r4=y4*W+x4; if(ldb[r4]>11&&ldb[r4+W]>11&&ldb[r4+2*W]>11&&ldb[r4+3*W]>11){ ref[x4]=y4; break; } } }
+      for(var x5=0;x5<W;x5++){ var w5=[]; for(var d5=-14;d5<=14;d5++) w5.push(ref[Math.max(0,Math.min(W-1,x5+d5))]); w5.sort(function(a,b){return a-b}); edge[x5]=w5[14]; }
+      for(var p5=0;p5<8;p5++){ var e2=new Float32Array(W); for(var x7=0;x7<W;x7++) e2[x7]=(edge[Math.max(0,x7-1)]+edge[x7]*2+edge[Math.min(W-1,x7+1)])/4; edge=e2; }
       for(var x6=0;x6<W;x6++) for(var y6=0;y6<H;y6++){ var j6=(y6*W+x6)*4, f6=ss(edge[x6]-1.5,edge[x6]+1.5,y6); if(y6>FOOT+1){ o[j6+3]=0; continue; }
         if(inMat(x6,y6)) o[j6+3]= f6*255;                                // 매트리스 안: 이불 윗선 아래는 모두 이불
         else { var hg= y6<edge[x6]-2 ? 0 : ss(EXL[y6]-1.2,EXL[y6]+1.2,x6)*(1-ss(EXR[y6]-1.2,EXR[y6]+1.2,x6)); o[j6]=d[j6]; o[j6+1]=d[j6+1]; o[j6+2]=d[j6+2]; o[j6+3]=hg*255; } }   // 매트리스 밖: 줄마다 잰 이불 외곽선 안쪽만(원래 색)
+      var dk=new Float32Array(N); for(var i6=0;i6<N;i6++) dk[i6]=(base[i6*4]*.3+base[i6*4+1]*.59+base[i6*4+2]*.11)-lu[i6]; var dkb=blur(dk,2);
+      for(var y14=0;y14<H;y14++) for(var x14=0;x14<W;x14++){ var i14=y14*W+x14, j14=i14*4, a14=o[j14+3]/255; if(a14>.98||y14>FOOT+4) continue;
+        if(!inMat(x14,y14) || y14<edge[x14]-10 || y14>edge[x14]+2) continue;   // 이불 끝단 바로 위 그림자만(옆·시트 주름 차이는 무시)
+        var sh=ss(3,22,dkb[i14])*.6*(1-ss(edge[x14]-10,edge[x14]-2,y14)*0+1-1)*(1-a14)*ss(edge[x14]-10,edge[x14]-3,y14); if(sh<.01) continue; var A2=a14+sh;
+        o[j14]=o[j14]*a14/A2; o[j14+1]=o[j14+1]*a14/A2; o[j14+2]=o[j14+2]*a14/A2; o[j14+3]=A2*255; }
       top=[]; for(var x10=60;x10<270;x10+=6) top.push(Math.round(edge[x10])); top.sort(function(a,b){return a-b});
     }
     x.putImageData(im,0,0);
