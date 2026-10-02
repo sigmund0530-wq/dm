@@ -838,17 +838,16 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
   function bat(w){ var c=w.charCodeAt(w.length-1)-0xAC00; return c>=0&&c<11172&&c%28!==0; }   // 받침 있으면 true
   var STORY={'관성':['금요일 6:42, 상사가 37페이지를 보냈다','官이 움직임','t2'],'인성':['북부대공이 오늘 밤 문을 두드렸다','水가 흔들림','t4'],'재성':['전 애인에게 새벽 2시에 전화가 왔다','火가 올라옴','t5'],
     '식상':['낯선 동네에서 길을 잃었다','土가 받쳐줌','t8'],'비겁':['우리 넷이 같은 사람을 좋아한다면','비겁이 앞에 섬','t6']};
-  var STORY_ORDER=[SJ.grp].concat(['관성','인성','재성','식상','비겁'].filter(function(g){ return g!==SJ.grp; }));
   var PETS=[
-    {hog:'헤헤 간지러워',luck:'사주가 오늘 '+SJ.day+'일이래. 너한텐 「'+SJ.tt[0]+'」인 날이래',ask:'오늘 너한테 맞는 거 골라 놨어'},
-    {hog:'한 번 더 해 줘',luck:'사주가 "'+SJ.tt[1]+'"래. …그건 이불 속에서 해도 돼',ask:'이거 같이 볼래?'},
-    {hog:'나 오늘 여기서 안 나가',luck:'사주가 너 '+SJ.dm[0]+' 같은 사람이래. "'+SJ.dm[1]+'"래',ask:'충전하면서 이거 읽자'},
-    {hog:'너 손 따뜻하다',luck:'오늘은 '+SJ.el+'('+SJ.elh+') 기운이 센 날이래. 너는 '+SJ.rel+'이래. 나처럼',ask:'이거 딱 너 얘기야'},
-    {hog:'이불 더 덮어 줘',luck:'사주가 지금 '+SJ.term[2]+(bat(SJ.term[2])?'이래. ':'래. ')+SJ.term[3]+'래'+(SJ.nextIn!==null&&SJ.nextIn<=7?'. '+SJ.nextIn+'일 뒤면 '+SJ.next[2]+(bat(SJ.next[2])?'이래':'래'):''),ask:'이런 날엔 이거야'},
-    {hog:'흐음… 이 손 알아',luck:'사주가 그러는데 너 전생에 '+SJ.card[1]+' '+SJ.card[0]+(bat(SJ.card[0])?'이었대. ':'였대. ')+SJ.card[2][0]+'·'+SJ.card[2][1]+' 좋은 사람',ask:'그 감으로 이거 읽어 봐'},
-    {hog:'우리 원래 아는 사이야',luck:'사주가 우리 전생에 '+SJ.pair,ask:'그래서 오늘도 같이 있는 거야. 이거 볼래?'},
-    {hog:'나 질문 있어',luck:'사주가 오늘 이거 물어보래. "'+SJ.q+'"',ask:'대답 생각나면 말해 줘. 그동안 이거'},
-    {hog:'그만그만, 가시 선다',luck:'오늘 '+SJ.day+'일, 사주가 '+SJ.tg+' 날이래. 「'+SJ.tt[0]+'」',ask:'하나 더 있어. 볼래?'}
+    {hog:'헤헤 간지러워',luck:'사주가 오늘 '+SJ.day+'일이래. 너한텐 「'+SJ.tt[0]+'」인 날이래'},
+    {hog:'한 번 더 해 줘',luck:'사주가 "'+SJ.tt[1]+'"래. …그건 이불 속에서 해도 돼'},
+    {hog:'나 오늘 여기서 안 나가',luck:'사주가 너 '+SJ.dm[0]+' 같은 사람이래. "'+SJ.dm[1]+'"래'},
+    {hog:'너 손 따뜻하다',luck:'오늘은 '+SJ.el+'('+SJ.elh+') 기운이 센 날이래. 너는 '+SJ.rel+'이래. 나처럼'},
+    {hog:'이불 더 덮어 줘',luck:'사주가 지금 '+SJ.term[2]+(bat(SJ.term[2])?'이래. ':'래. ')+SJ.term[3]+'래'+(SJ.nextIn!==null&&SJ.nextIn<=7?'. '+SJ.nextIn+'일 뒤면 '+SJ.next[2]+(bat(SJ.next[2])?'이래':'래'):'')},
+    {hog:'흐음… 이 손 알아',luck:'사주가 그러는데 너 전생에 '+SJ.card[1]+' '+SJ.card[0]+(bat(SJ.card[0])?'이었대. ':'였대. ')+SJ.card[2][0]+'·'+SJ.card[2][1]+' 좋은 사람'},
+    {hog:'우리 원래 아는 사이야',luck:'사주가 우리 전생에 '+SJ.pair},
+    {hog:'나 질문 있어',luck:'사주가 오늘 이거 물어보래. "'+SJ.q+'"'},
+    {hog:'그만그만, 가시 선다',luck:'오늘 '+SJ.day+'일, 사주가 '+SJ.tg+' 날이래. 「'+SJ.tt[0]+'」'}
   ], petN=0, petT=[], talk=$('bmTalk');
   function petHit(ev){ if(!ev||!ev.detail) return false; var r=bed.getBoundingClientRect(), x=(ev.clientX-r.left)/r.width, y=(ev.clientY-r.top)/r.height;
     return state==='bed' && x>.28 && x<.72 && y>.02 && y<.22; }
@@ -859,18 +858,22 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
       if(talk.children.length>=3) talk.removeChild(talk.firstChild); talk.appendChild(b);
       petT.push(setTimeout(function(){ b.className='bm-hi'; make(b); }, still?0:500)); }, at));
   }
+  // 이야기는 끼워 넣지 않음: 쓰다듬을 땐 고슴도치 말 + 사주 얘기 두 마디만.
+  // 세 번째쯤, 한 번만 고슴도치가 '자기가 읽던 것'을 흘리듯 말함 (추천 아님 · 눌러도 되고 말아도 됨)
+  var READ=['어제 이거 읽다 잠들었어','이거 읽다가 이불 속에서 소리 질렀어','이거 마지막 장 아직 못 읽었어'], told=false;
   function pet(){
-    talkClear(); sajuHide(); var n=petN++, P=PETS[n%PETS.length], ST=STORY[STORY_ORDER[n%STORY_ORDER.length]]; P.st=ST;
+    talkClear(); sajuHide(); var n=petN++, P=PETS[n%PETS.length];
     hogPrev=hogE; hogE=0; hogT0=performance.now(); if(window.__hogDraw) window.__hogDraw();           // 활짝
     petT.push(setTimeout(function(){ hogPick(score,true); },1800));
     talkAdd(function(b){ b.textContent=P.hog; },0);
     talkAdd(function(b){ b.textContent=P.luck; },1300);
-    talkAdd(function(b){ b.classList.add('story'); b.setAttribute('aria-label',P.ask+' · '+P.st[0]+' 보기');
-      b.innerHTML='<i class="thumb '+P.st[2]+'"></i><span></span>';
-      var t=b.lastChild; t.appendChild(document.createTextNode(P.ask)); var bb=document.createElement('b'); bb.textContent='「'+P.st[0]+'」'; t.appendChild(bb);
-      var em=document.createElement('em'); em.textContent='같이 보기 ›'; t.appendChild(em);
-      b.onclick=function(){ if(typeof openStory==='function') openStory(P.st[0],P.st[1],P.st[2]); }; },3000);
-    petT.push(setTimeout(talkClear,13000));
+    if(n===2 && !told){ told=true; var st=STORY[SJ.grp], line=READ[(SJ.term[1]+n)%READ.length];
+      talkAdd(function(b){ b.classList.add('story'); b.setAttribute('aria-label',line+' · '+st[0]);
+        b.innerHTML='<i class="thumb '+st[2]+'"></i><span></span>';
+        var t=b.lastChild; t.appendChild(document.createTextNode(line)); var bb=document.createElement('b'); bb.textContent='「'+st[0]+'」'; t.appendChild(bb);
+        var em=document.createElement('em'); em.textContent='궁금하면 눌러 봐'; t.appendChild(em);
+        b.onclick=function(){ if(typeof openStory==='function') openStory(st[0],st[1],st[2]); }; },3400); }
+    petT.push(setTimeout(talkClear,n===2?13000:8000));
   }
   bed.addEventListener('click',function(ev){
     if(petHit(ev)){ pet(); return; }
