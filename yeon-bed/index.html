@@ -793,12 +793,33 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
   });
 
   // ── 고슴도치 얼굴을 누르면: 쓰다듬기 → 고슴도치가 반응하고, 사주에서 들은 오늘 얘기 + 같이 볼 이야기까지 직접 말함
+  // 사주 데이터: 연(緣) 프로토타입의 표(일간 10개 · 오늘의 십성)를 그대로 가져옴. 오늘 일진은 실제 날짜(한국 시간)로 계산.
+  // 사용자 일간은 아직 입력을 안 받아서 예시로 정화(丁) — 귀인 방위 '서쪽'도 같은 예시 기준.
+  var SJ=(function(){
+    var SK='갑을병정무기경신임계', BK='자축인묘진사오미신유술해', EK=['목','화','토','금','수'], EH='木火土金水', SE=[0,0,1,1,2,2,3,3,4,4];
+    var DM=[['큰 나무','성장하는 느낌이 없으면 쉽게 지쳐요.'],['꽃과 덩굴','혼자 오래 버티기보다 기댈 곳이 있을 때 더 멀리 가요.'],['태양','쉬는 날에도 뭔가 해야 마음이 편해요. 일정에 빈칸을 일부러 남겨두세요.'],
+      ['촛불','사람 많은 자리 뒤에는 혼자 충전하는 시간을 꼭 챙기세요.'],['큰 산','변화를 천천히 받아들이는 편이에요.'],['텃밭','걱정이 많아지면 머릿속 할 일을 종이에 꺼내두세요.'],
+      ['바위','몸을 쓰면 머리가 맑아지는 편이에요.'],['보석','정돈된 공간에서 마음이 편해져요. 주변을 정리하는 게 곧 휴식이에요.'],['큰 강','한곳에 오래 머물면 답답해해요.'],['빗물','감정의 파도가 올 때는 잠과 산책으로 리듬을 되찾아보세요.']];
+    var DMREL=['먼저 손을 내미는 편','상대에게 맞춰주는 힘이 큰 편','솔직하고 뒤끝이 적은 편','소수와 깊게 사귀는 편','한번 믿으면 오래가는 편','챙겨주는 걸 좋아하는 편','의리가 강한 편','배려가 섬세한 편','자유로운 관계를 좋아하는 편','상대 마음을 잘 알아주는 편'];
+    var TT={'비견':['나란히','비슷한 사람과 페이스를 맞추기 좋은 날이에요.'],'겁재':['내 속도','남과 비교하기보다 내 리듬을 지키면 편해요.'],'식신':['즐기기','맛있는 것, 만드는 것에 시간을 써보세요.'],
+      '상관':['말 한 번 더','아이디어는 번뜩이지만 말투는 한 번 더 다듬어요.'],'편재':['가볍게 시도','새로운 제안에 부담 없이 발을 담가보세요.'],'정재':['차곡차곡','정리와 마감, 작은 저축이 잘 되는 날이에요.'],
+      '편관':['정면 돌파','미뤄둔 부담스러운 일을 하나 끝내보세요.'],'정관':['약속','규칙과 약속을 지키는 모습이 신뢰로 돌아와요.'],'편인':['혼자만의 영감','조용한 시간에 떠오른 생각을 메모하세요.'],'정인':['배움','누군가의 조언이 생각보다 도움이 되는 날이에요.']};
+    var GRP={'비견':'비겁','겁재':'비겁','식신':'식상','상관':'식상','편재':'재성','정재':'재성','편관':'관성','정관':'관성','편인':'인성','정인':'인성'};
+    function jdn(y,m,d){ var a=Math.floor((14-m)/12), yy=y+4800-a, mm=m+12*a-3; return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045; }
+    function tg(dm,s){ var e1=SE[dm], e2=SE[s], same=dm%2===s%2;
+      if(e1===e2) return same?'비견':'겁재'; if((e1+1)%5===e2) return same?'식신':'상관'; if((e1+2)%5===e2) return same?'편재':'정재'; if((e2+2)%5===e1) return same?'편관':'정관'; return same?'편인':'정인'; }
+    var me=3, k=new Date(Date.now()+9*3600e3), i=(jdn(k.getUTCFullYear(),k.getUTCMonth()+1,k.getUTCDate())+49)%60, s=i%10, b=i%12, t=tg(me,s);
+    return {day:SK[s]+BK[b], el:EK[SE[s]], elh:EH[SE[s]], tg:t, grp:GRP[t], tt:[TT[t][0],TT[t][1].replace(/\.$/,'')], dm:[DM[me][0],DM[me][1].replace(/\.$/,'')], rel:DMREL[me]};
+  })();
+  var STORY={'관성':['금요일 6:42, 상사가 37페이지를 보냈다','官이 움직임','t2'],'인성':['북부대공이 오늘 밤 문을 두드렸다','水가 흔들림','t4'],'재성':['전 애인에게 새벽 2시에 전화가 왔다','火가 올라옴','t5'],
+    '식상':['낯선 동네에서 길을 잃었다','土가 받쳐줌','t8'],'비겁':['우리 넷이 같은 사람을 좋아한다면','비겁이 앞에 섬','t6']};
+  var STORY_ORDER=[SJ.grp].concat(['관성','인성','재성','식상','비겁'].filter(function(g){ return g!==SJ.grp; }));
   var PETS=[
-    {hog:'헤헤 간지러워',luck:'사주가 오늘 물 기운 센 날이래. 누가 찾아온대',ask:'이거 같이 볼래?',st:['북부대공이 오늘 밤 문을 두드렸다','水가 흔들림','t4']},
-    {hog:'한 번 더 해 줘',luck:'오늘은 바깥일이 너 누르는 날이래. 여기 있어',ask:'이거 딱 너 얘기야',st:['금요일 6:42, 상사가 37페이지를 보냈다','官이 움직임','t2']},
-    {hog:'나 오늘 여기서 안 나가',luck:'사주가 오늘 불씨 지키는 날이래. 같이 지키자',ask:'불 끄고 이거 읽을래?',st:['전 애인에게 새벽 2시에 전화가 왔다','火가 올라옴','t5']},
-    {hog:'너 손 따뜻하다',luck:'오늘 땅 기운이 받쳐준대. 길 잃어도 괜찮대',ask:'길 잃는 얘긴 이불 속이 제일이야',st:['낯선 동네에서 길을 잃었다','土가 받쳐줌','t8']},
-    {hog:'그만그만, 가시 선다',luck:'오늘은 친구 기운이 센 날이래',ask:'친구 얘기 하나 있어. 볼래?',st:['우리 넷이 같은 사람을 좋아한다면','비겁이 앞에 섬','t6']}
+    {hog:'헤헤 간지러워',luck:'사주가 오늘 '+SJ.day+'일이래. 너한텐 「'+SJ.tt[0]+'」인 날이래',ask:'오늘 너한테 맞는 거 골라 놨어'},
+    {hog:'한 번 더 해 줘',luck:'사주가 "'+SJ.tt[1]+'"래. …그건 이불 속에서 해도 돼',ask:'이거 같이 볼래?'},
+    {hog:'나 오늘 여기서 안 나가',luck:'사주가 너 '+SJ.dm[0]+' 같은 사람이래. "'+SJ.dm[1]+'"래',ask:'충전하면서 이거 읽자'},
+    {hog:'너 손 따뜻하다',luck:'오늘은 '+SJ.el+'('+SJ.elh+') 기운이 센 날이래. 너는 '+SJ.rel+'이래. 나처럼',ask:'이거 딱 너 얘기야'},
+    {hog:'그만그만, 가시 선다',luck:'오늘 '+SJ.day+'일, 사주가 '+SJ.tg+' 날이래. 「'+SJ.tt[0]+'」',ask:'하나 더 있어. 볼래?'}
   ], petN=0, petT=[], talk=$('bmTalk');
   function petHit(ev){ if(!ev||!ev.detail) return false; var r=bed.getBoundingClientRect(), x=(ev.clientX-r.left)/r.width, y=(ev.clientY-r.top)/r.height;
     return state==='bed' && x>.28 && x<.72 && y>.02 && y<.22; }
@@ -810,7 +831,7 @@ let last=window.scrollY,ticking=false;function navScroll(){const b=document.quer
       petT.push(setTimeout(function(){ b.className='bm-hi'; make(b); }, still?0:500)); }, at));
   }
   function pet(){
-    talkClear(); sajuHide(); var P=PETS[petN++%PETS.length];
+    talkClear(); sajuHide(); var n=petN++, P=PETS[n%PETS.length], ST=STORY[STORY_ORDER[n%STORY_ORDER.length]]; P.st=ST;
     hogPrev=hogE; hogE=0; hogT0=performance.now(); if(window.__hogDraw) window.__hogDraw();           // 활짝
     petT.push(setTimeout(function(){ hogPick(score,true); },1800));
     talkAdd(function(b){ b.textContent=P.hog; },0);
